@@ -42,6 +42,8 @@ show_test_case (i, g) = do
   let t =  epsilon_elimination t_0
   putStrLn "Transducer:"
   print t
+  let dot = transducerToGraph t_0
+  _ <- runGraphvizCommand Dot dot Png ( "before-elimination"++ ".png")
 
   print t_0
 
