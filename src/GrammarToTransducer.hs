@@ -69,7 +69,11 @@ rule_to_transducer s_map (Sequence r1 r2) = do
     (s2, f2, t2) <- rule_to_transducer s_map r2
 
     -- let t3 = M.fromList [(s, [Labeled Epsilon s1]), (f1, [Labeled Epsilon s2]), (f2, [Labeled Epsilon f])]
-    let t3 = insEdgesAndNodes [(s, s1,  Labeled Epsilon), (f1, s2,  Labeled Epsilon), (f2, f,  Labeled Epsilon)] empty
+    let t3 = insEdgesAndNodes [
+                (s, s1,  Labeled Epsilon)
+                , (f1, s2,  Labeled Epsilon)
+                , (f2, f,  Labeled Epsilon)
+            ] empty
 
     return (s, f, t1 `u` (t2 `u` t3))
 
@@ -80,7 +84,12 @@ rule_to_transducer s_map (Alternation r1 r2) = do
     (s1, f1, t1) <- rule_to_transducer s_map r1 
     (s2, f2, t2) <- rule_to_transducer s_map r2
 
-    let t3 = insEdgesAndNodes [(s, s2,  Labeled Epsilon), (s, s1,  Labeled Epsilon), (f1, f,  Labeled Epsilon), (f2, f,  Labeled Epsilon)] empty
+    let t3 = insEdgesAndNodes [
+                (s, s2,  Labeled Epsilon)
+                , (s, s1,  Labeled Epsilon)
+                , (f1, f,  Labeled Epsilon)
+                , (f2, f,  Labeled Epsilon)
+            ] empty
 
     -- let t3 = M.fromList [(s, [Labeled Epsilon s1, Labeled Epsilon s2]), (f1, [Labeled Epsilon f]), (f2, [Labeled Epsilon f])]
 
@@ -100,7 +109,7 @@ rule_to_transducer_label s Empty = do
     return (s, f, mkGraph [(s, ()),(f, ())] [])
 rule_to_transducer_label s l = do
     (s,f) <- fresh_2
-    return (s, f, mkGraph [] [(s,f, Labeled l)])
+    return (s, f, insEdgesAndNodes [(s,f, Labeled l)] empty)
 
 fresh :: UniqueId Int
 fresh = do
