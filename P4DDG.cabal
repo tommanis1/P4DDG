@@ -1,0 +1,50 @@
+cabal-version:      3.0
+name:               P4DDG
+version:            0.0.0.1
+-- synopsis:
+-- description:
+license:            MIT
+license-file:       LICENSE
+author:             Tommaso Pacciani
+maintainer:         t.c.pacciani@uva.nl
+-- copyright:
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:  
+        Grammar
+        GrammarToTransducer
+        CodeGen.AName
+    -- other-modules:
+    -- other-extensions:
+    build-depends:    
+        base ^>=4.17.2.1
+        , mtl
+        , containers
+        , fgl
+    hs-source-dirs:   src, src/codegen
+    default-language: Haskell2010
+
+executable P4DDG
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+        TransducerToDot
+        PaperExampleGrammars
+    -- other-extensions:
+    build-depends:
+        base ^>=4.17.2.1,
+        graphviz
+        , fgl
+        , containers
+        , text
+        , P4DDG
+
+    hs-source-dirs:   app, tests
+    default-language: Haskell2010
