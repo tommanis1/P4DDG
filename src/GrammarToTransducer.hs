@@ -35,7 +35,7 @@ data Transition =
     Labeled Label
     | Output NonTerminalId
     | Call Expression 
-    deriving (Show)
+    deriving (Show, Eq, Ord)
 
 type StateId = Int
 type NonTerminalMap = M.Map NonTerminalId StateId
@@ -258,3 +258,14 @@ is_epsilon _ = False
 filterLabEdges :: (TEdgde -> Bool) -> TransducerGraph -> TransducerGraph
 filterLabEdges f g  = 
     mkGraph (labNodes g) (filter f $ labEdges g)
+
+-- TODO
+-- This is needed to circumvent a bug in the epsilon elimination procedure 
+removeDuplicateEdges :: Transducer -> Transducer
+removeDuplicateEdges t = 
+    let 
+        g = graph t 
+        n = labNodes g
+        e = labEdges g
+    in
+        t{graph=mkGraph n (S.toList. S.fromList $ e)}

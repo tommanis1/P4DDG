@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
 import Grammar
@@ -43,7 +45,7 @@ show_test_case (i, g) = do
   putStrLn "Grammar:"
   putStrLn $ pp_Grammar g
   let t_0 = grammar_to_transducer g
-  let t =  epsilon_elimination t_0
+  let t :: Transducer =  removeDuplicateEdges $ epsilon_elimination t_0
   
   putStrLn "Transducer:"
   print t_0
