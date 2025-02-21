@@ -6,16 +6,15 @@ module Main where
 
 import Grammar
 import TransducerToDot
+import CodeGen.AName
+
 -- import PaperExampleGrammars
 import GrammarToTransducer
 import Data.GraphViz.Commands
 import Data.Graph.Inductive
 import Data.Graph.Inductive.Query.DFS
 
-
-main :: IO ()
-main = do
-  let tunnel = 
+tunnel = 
         [
         (Nonterminal "header" [] (Sequence (RuleLabel $ Terminal "ethernet") (RuleLabel $ NonTerminalCall "tunnel" "ethernet.etherType")))
         , Nonterminal "tunnel" ["type"] (
@@ -25,6 +24,10 @@ main = do
             `Alternation` (RuleLabel Empty)
           )
         ]
+
+main :: IO ()
+main = do
+
   let test_cases = [
             -- bb, 
             -- b
@@ -63,8 +66,10 @@ show_test_case (i, g) = do
   -- let dot = transducerToGraph t_0
   -- _ <- runGraphvizCommand Dot dot Png (f ++ ".png")
   
-  let tg =(insEdgesAndNodes [(0, 1,  Labeled Epsilon), (0, 2,  Labeled Epsilon), (3, 4,  Labeled Epsilon)] (mkGraph [(0, ()), (1, ())] [(0,0, Output "a")]) :: TransducerGraph)
-  let dot = transducerToGraph (Transducer {start = 0, graph = tg })
-  _ <- runGraphvizCommand Dot dot Png (f ++ "tt"++ ".png")
-  print $ reachable 0 tg
+  -- let tg =(insEdgesAndNodes [(0, 1,  Labeled Epsilon), (0, 2,  Labeled Epsilon), (3, 4,  Labeled Epsilon)] (mkGraph [(0, ()), (1, ())] [(0,0, Output "a")]) :: TransducerGraph)
+  -- let dot = transducerToGraph (Transducer {start = 0, graph = tg })
+  -- _ <- runGraphvizCommand Dot dot Png (f ++ "tt"++ ".png")
+  -- print $ reachable 0 tg
+  let (c,p) =  gen_parser () ((empty_context tunnel) {indent = 1}) t 
+  putStrLn $ p
   return ()
