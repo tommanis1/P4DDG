@@ -1,5 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Main where
 
 import Grammar
@@ -7,7 +9,10 @@ import TransducerToDot
 -- import PaperExampleGrammars
 import GrammarToTransducer
 import Data.GraphViz.Commands
-import qualified Data.Map as M
+import Data.Graph.Inductive
+import Data.Graph.Inductive.Query.DFS
+
+
 main :: IO ()
 main = do
   let tunnel = 
@@ -39,13 +44,16 @@ show_test_case (i, g) = do
   putStrLn "Grammar:"
   putStrLn $ pp_Grammar g
   let t_0 = grammar_to_transducer g
-  let t =  epsilon_elimination t_0
+  let t :: Transducer =  removeDuplicateEdges $ epsilon_elimination t_0
+  
   putStrLn "Transducer:"
-  print t
-  let dot = transducerToGraph t_0
-  _ <- runGraphvizCommand Dot dot Png ( "before-elimination"++ ".png")
-
   print t_0
+  let dot = transducerToGraph t_0
+  _ <- runGraphvizCommand Dot dot Png ("before-e"++ ".png")
+  print $ reachable 0 (graph t_0)
+  putStrLn "Transducer after e elim:"
+
+  print t
 
   putStrLn "Generating transducer image."
   let f = "test" ++ show i
@@ -54,4 +62,9 @@ show_test_case (i, g) = do
   _ <- runGraphvizCommand Dot dot Png (f ++ "after-e-elimination"++ ".png")
   -- let dot = transducerToGraph t_0
   -- _ <- runGraphvizCommand Dot dot Png (f ++ ".png")
+  
+  let tg =(insEdgesAndNodes [(0, 1,  Labeled Epsilon), (0, 2,  Labeled Epsilon), (3, 4,  Labeled Epsilon)] (mkGraph [(0, ()), (1, ())] [(0,0, Output "a")]) :: TransducerGraph)
+  let dot = transducerToGraph (Transducer {start = 0, graph = tg })
+  _ <- runGraphvizCommand Dot dot Png (f ++ "tt"++ ".png")
+  print $ reachable 0 tg
   return ()

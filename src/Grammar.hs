@@ -19,7 +19,7 @@ data Label =
     | Terminal String
     | NonTerminalCall NonTerminalId Expression
     | Binding Id Expression
-    | Constraint Expression deriving (Show, Eq)
+    | Constraint Expression deriving (Show, Eq, Ord)
 
 data Nonterminal = Nonterminal NonTerminalId [String] Rule
 
