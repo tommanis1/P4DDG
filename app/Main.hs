@@ -1,75 +1,133 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE LambdaCase #-}
 
 module Main where
 
 import Grammar
 import TransducerToDot
-import CodeGen.AName
-
--- import PaperExampleGrammars
+import qualified CodeGen.AName as AName
 import GrammarToTransducer
 import Data.GraphViz.Commands
 import Data.Graph.Inductive
 import Data.Graph.Inductive.Query.DFS
 
-tunnel = 
-        [
-        (Nonterminal "header" [] (Sequence (RuleLabel $ Terminal "ethernet") (RuleLabel $ NonTerminalCall "tunnel" "ethernet.etherType")))
-        , Nonterminal "tunnel" ["type"] (
-            (((RuleLabel $ Constraint "type = TYPE_IPV4") `Sequence` (RuleLabel $ Terminal "ipv4"))
+import System.Console.GetOpt
+import System.Environment (getArgs)
+import System.Exit (exitSuccess)
+import System.IO (hPutStrLn, stderr)
 
-            `Alternation` (((RuleLabel $ Constraint "type = TYPE_MYTUNNEL") `Sequence` (RuleLabel $ Terminal "mytunnel")) `Sequence` (RuleLabel $ NonTerminalCall "tunnel" "myTunnel.protoid")))
-            `Alternation` (RuleLabel Empty)
-          )
-        ]
+import Parser
+import Text.Megaparsec hiding (State)
+import Text.Megaparsec.Char
+import qualified Data.Text as T
+import qualified Text.Megaparsec.Char.Lexer as L
+
+data Settings = Settings {
+  debug :: Bool,
+  backend :: String,
+  codegen :: Transducer -> String,
+  input_file :: FilePath,
+  output_file :: Maybe FilePath
+}
+
+instance Show Settings where
+  show s = "Settings { debug = " ++ show (debug s) ++
+           ", input_file = " ++ show (input_file s) ++
+           ", output_file = " ++ show (output_file s) ++ 
+           ", backend = " ++ show (backend s) ++
+           " }"
+
+-- GENERATED WITH AN LLM
+defaultSettings :: Settings
+defaultSettings = Settings {
+  debug = False,
+  backend = "",
+  codegen = \_ -> "",
+  input_file = "",
+  output_file = Nothing
+}
+
+type Flag = Settings -> Settings
+
+-- GENERATED WITH AN LLM
+options :: [OptDescr Flag]
+options =
+    [Option ['d'] ["debug"]
+        (NoArg (\s -> s { debug = True }))
+        "Enable debug mode"
+   ,Option ['b'] ["backend"]
+        (ReqArg (\x s -> s { backend = x, codegen = backendFromString x }) "BACKEND")
+        "Backend code generator (stacks)"
+    ,Option ['i'] ["input"]
+        (ReqArg (\x s -> s { input_file = x }) "FILE")
+        "Input file"
+    ,Option ['o'] ["output"]
+        (ReqArg (\x s -> s { output_file = Just x }) "FILE")
+        "Output file (default: stdout)"
+    ,Option ['h'] ["help"]
+        (NoArg (\_ -> error "Help requested"))
+        "Show this help text"
+    ]
+backendFromString  :: String -> (Transducer -> String)
+backendFromString = \case
+    "stacks" -> AName.gen_p4
+    x -> error $ "Invalid backend: " ++ x
+
+-- GENERATED WITH AN LLM
+argparse :: IO Settings
+argparse = do
+  args <- getArgs
+  case getOpt Permute options args of
+    (flags, nonOpts, []) -> do
+      let settings = foldl (flip id) defaultSettings flags
+          finalSettings = if null nonOpts
+                          then settings
+                          else settings { input_file = head nonOpts }
+      if input_file finalSettings == ""
+        then do
+          hPutStrLn stderr "Error: No input file specified"
+          showHelp
+          error "No input file specified"
+      else if backend finalSettings == ""
+        then do
+          hPutStrLn stderr "Error: No backend specified"
+          showHelp
+          error "No backend specified"
+      else return finalSettings
+    (_, _, errs) -> do
+      hPutStrLn stderr (concat errs)
+      showHelp
+      error "Failed to parse arguments"
+
+-- GENERATED WITH AN LLM
+showHelp :: IO ()
+showHelp = do
+  let header = "Usage: program [OPTIONS] [input_file]"
+  hPutStrLn stderr (usageInfo header options)
+  exitSuccess
 
 main :: IO ()
 main = do
-
-  let test_cases = [
-            -- bb, 
-            -- b
-        --   [Nonterminal "testalt" [] (
-        -- Alternation (RuleLabel $ Terminal "a") (RuleLabel $ Terminal "b"))]
-        tunnel
-          ]
-  show_test_cases test_cases
-
-show_test_cases :: [Grammar] -> IO ()
-show_test_cases g = do
-  mapM_ show_test_case (zip [0..] g)
-
-
-show_test_case :: (Integer, Grammar) -> IO ()
-show_test_case (i, g) = do
-  putStrLn "Grammar:"
-  putStrLn $ pp_Grammar g
-  let t_0 = grammar_to_transducer g
-  let t :: Transducer =  removeDuplicateEdges $ epsilon_elimination t_0
+  settings <- argparse
+  putStrLn $ "Using settings: " ++ show settings
   
-  putStrLn "Transducer:"
-  print t_0
-  let dot = transducerToGraph t_0
-  _ <- runGraphvizCommand Dot dot Png ("before-e"++ ".png")
-  print $ reachable 0 (graph t_0)
-  putStrLn "Transducer after e elim:"
+  input_file_contents <- readFile $ input_file settings
 
-  print t
+  case parse parse_Grammar "" input_file_contents of
+    (Left e) -> error $ show e
+    (Right ddg) -> do 
+      print $ show ddg
+      print $ pp_Grammar ddg
 
-  putStrLn "Generating transducer image."
-  let f = "test" ++ show i
+      let transducer = keepOnlyReachable .update_output_transitions . removeDuplicateEdges . epsilon_elimination . grammar_to_transducer $ ddg
 
-  let dot = transducerToGraph t
-  _ <- runGraphvizCommand Dot dot Png (f ++ "after-e-elimination"++ ".png")
-  -- let dot = transducerToGraph t_0
-  -- _ <- runGraphvizCommand Dot dot Png (f ++ ".png")
-  
-  -- let tg =(insEdgesAndNodes [(0, 1,  Labeled Epsilon), (0, 2,  Labeled Epsilon), (3, 4,  Labeled Epsilon)] (mkGraph [(0, ()), (1, ())] [(0,0, Output "a")]) :: TransducerGraph)
-  -- let dot = transducerToGraph (Transducer {start = 0, graph = tg })
-  -- _ <- runGraphvizCommand Dot dot Png (f ++ "tt"++ ".png")
-  -- print $ reachable 0 tg
-  let (c,p) =  gen_parser () ((empty_context tunnel) {indent = 1}) t 
-  putStrLn $ p
-  return ()
+      let (c,p) =  AName.gen_parser () ((AName.empty_context ddg) {AName.indent = 1}) transducer
+      _ <- runGraphvizCommand Dot (transducerToGraph transducer) Png ( "debug_transducer"++ ".png")
+
+      case output_file settings of
+        Just outFile -> writeFile outFile p
+        Nothing -> putStrLn p
+
+

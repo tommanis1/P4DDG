@@ -103,7 +103,7 @@ rule_to_transducer_label s_map l@(NonTerminalCall name e) = do
         Just sa -> 
             return (s, f, insEdgesAndNodes [(s, f, Labeled l),(s, sa, Call e )] empty)
         Nothing ->
-            error "Error: rule_to_transducer_label"
+            error $ "Error: rule_to_transducer_label\n can't find:" ++ show name
 rule_to_transducer_label s Empty = do
     (s,f) <- fresh_2
     return (s, f, mkGraph [(s, ()),(f, ())] [])
@@ -269,3 +269,27 @@ removeDuplicateEdges t =
         e = labEdges g
     in
         t{graph=mkGraph n (S.toList. S.fromList $ e)}
+
+keepOnlyReachable :: Transducer -> Transducer
+keepOnlyReachable t = 
+    let 
+        r = reachable (start t) (graph t)
+        nodes = labNodes (graph t)
+        newNodes = filter (\(i, _) -> elem i r) nodes
+        -- newEdges = filter (\(_, _, l) -> elem (fst l) r) (labEdges (graph t))
+    in
+        t{graph = mkGraph newNodes (labEdges (graph t))}
+
+update_output_transitions :: Transducer -> Transducer
+-- This function is a bandaid to avoid a bug with output states. To solve this, it would be best to not have ouputs be a label on the edge, but on the node.
+update_output_transitions t = 
+    let 
+        g = graph t
+        n = labNodes g
+        e = labEdges g
+        newE = [case trans of
+            (x, y, Output o) -> (x, x, Output o)
+            x -> x
+            | trans <- e]
+    in
+        t{graph = mkGraph n newE}

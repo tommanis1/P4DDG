@@ -105,5 +105,5 @@ transducerToGraph t =
         edge (s1, s2, Call e) = return $ (fromIntegral $ s1, fromIntegral $ s2, "call ")
         edge (s1, _, _) = []
 
-        node (s1, s2, Output o) = (s1, ("A:" ++ o))
+        node (s1, s2, Output o) = (s1, ( show s1 ++ "\nOut:" ++ o))
         node (s1, _, _) = (s1, show s1)
