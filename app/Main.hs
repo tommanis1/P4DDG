@@ -7,25 +7,30 @@ module Main where
 
 import Grammar
 import TransducerToDot
+import qualified P4TransducerToDot as P4Dot
+
 import qualified CodeGen.AName as AName
 import GrammarToTransducer
 import Data.GraphViz.Commands
 import Data.Graph.Inductive
 import Data.Graph.Inductive.Query.DFS
-
+import Data.GraphViz.Types hiding (parse)
 import System.Console.GetOpt
 import System.Environment (getArgs)
 import System.Exit (exitSuccess)
 import System.IO (hPutStrLn, stderr)
-
+import qualified Data.Text.Lazy as TL
 import Parser
 import Text.Megaparsec hiding (State)
 import Text.Megaparsec.Char
 import qualified Data.Text as T
 import qualified Text.Megaparsec.Char.Lexer as L
+import Control.Monad
+import qualified CodeGen.Continuation as C
 
 data Settings = Settings {
   debug :: Bool,
+  optimize :: Bool,
   backend :: String,
   codegen :: Transducer -> String,
   input_file :: FilePath,
@@ -43,6 +48,7 @@ instance Show Settings where
 defaultSettings :: Settings
 defaultSettings = Settings {
   debug = False,
+  optimize = False,
   backend = "",
   codegen = \_ -> "",
   input_file = "",
@@ -57,9 +63,13 @@ options =
     [Option ['d'] ["debug"]
         (NoArg (\s -> s { debug = True }))
         "Enable debug mode"
+    , Option ['p'] ["opt"]
+        (NoArg (\s -> s { optimize = True }))
+        "Enable optimizations"
+
    ,Option ['b'] ["backend"]
         (ReqArg (\x s -> s { backend = x, codegen = backendFromString x }) "BACKEND")
-        "Backend code generator (stacks)"
+        "Backend code generator (continuations, stacks (do not use))"
     ,Option ['i'] ["input"]
         (ReqArg (\x s -> s { input_file = x }) "FILE")
         "Input file"
@@ -73,6 +83,7 @@ options =
 backendFromString  :: String -> (Transducer -> String)
 backendFromString = \case
     "stacks" -> AName.gen_p4
+    "continuations" -> error "tmp"
     x -> error $ "Invalid backend: " ++ x
 
 -- GENERATED WITH AN LLM
@@ -116,18 +127,69 @@ main = do
   input_file_contents <- readFile $ input_file settings
 
   case parse parse_Grammar "" input_file_contents of
-    (Left e) -> error $ show e
+    (Left e) -> putStrLn $ Parser.prettyError e
     (Right ddg) -> do 
       print $ show ddg
       print $ pp_Grammar ddg
-
       let transducer = keepOnlyReachable .update_output_transitions . removeDuplicateEdges . epsilon_elimination . grammar_to_transducer $ ddg
 
-      let (c,p) =  AName.gen_parser () ((AName.empty_context ddg) {AName.indent = 1}) transducer
-      _ <- runGraphvizCommand Dot (transducerToGraph transducer) Png ( "debug_transducer"++ ".png")
+      case backend settings of
+        "continuations" -> do
+          let (p4t, c) = C.transducer_to_p4 ddg $ C.format transducer
+          let o = C.optimize p4t []
+          when (debug settings) $ do
+            putStrLn "Original abstract P4"
+            print p4t
+            putStrLn "Optimized abstract P4"
+            print $ o
 
-      case output_file settings of
-        Just outFile -> writeFile outFile p
-        Nothing -> putStrLn p
+          let dotgraph = (transducerToGraph transducer)
+          _ <- runGraphvizCommand Dot dotgraph Png ( "debug_original_transducer"++ ".png")
+          
+          print "p4t"
+          print p4t
+
+          print""
+          let dotgraph2 = P4Dot.p4TransducerToGraph p4t
+          _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
+
+          let dotgraph2 = P4Dot.p4TransducerToGraph o
+          _ <- runGraphvizCommand Dot dotgraph2 Png ("debug-p4transducer-opt" ++ ".png")
+          
+          when (optimize settings) $ do
+            putStrLn "Optimized P4 code"
+            let code = C.to_p4 ddg c o
+
+            putStrLn $ code
+          
+          when (not $ optimize settings) $ do
+            putStrLn "P4 code"
+            let code = C.to_p4 ddg c p4t
+            putStrLn $ code
 
 
+          putStrLn "done"
+
+
+        "stacks" -> do
+
+            let (c,p) =  AName.gen_parser () ((AName.empty_context ddg) {AName.indent = 1}) transducer
+
+            let dotgraph = (transducerToGraph transducer)
+            _ <- runGraphvizCommand Dot dotgraph Png ( "debug_transducer"++ ".png")
+
+            let dotOutput = printDotGraph dotgraph
+            writeFile ("debug_transducer" ++ ".dot") (TL.unpack dotOutput)
+
+            case output_file settings of
+              Just outFile -> writeFile outFile p
+              Nothing -> putStrLn p
+
+            let (p4t, c) =  C.transducer_to_p4 ddg $ C.format transducer
+            print p4t
+            print $ C.optimize p4t []
+
+
+            let dotgraph2 = (P4Dot.p4TransducerToGraph p4t)
+            _ <- runGraphvizCommand Dot dotgraph2 Png ( "debug_p4transducer"++ ".png")
+            print "done"

@@ -70,7 +70,7 @@ type Edge = LEdge String
 --         find_final (Output l : _) = Just ("A:" ++ l)
 --         find_final (_ : ts) = find_final ts
 
-transducerToGraph :: Transducer -> Data.GraphViz.DotGraph Int
+{- transducerToGraph :: Transducer -> Data.GraphViz.DotGraph Int
 transducerToGraph t = 
     -- TODO differentiate between final and non-final states
     let 
@@ -102,7 +102,54 @@ transducerToGraph t =
     in graphElemsToDot params nodes e
     where
         edge (s1, s2, Labeled l) = return $ (fromIntegral s1, fromIntegral s2, pp_l l)
-        edge (s1, s2, Call e) = return $ (fromIntegral $ s1, fromIntegral $ s2, "call ")
+        edge (s1, s2, Call n e) = return $ (fromIntegral $ s1, fromIntegral $ s2, "call: " ++ n ++ "(" ++ show e ++ ")")
+        edge (s1, _, _) = []
+
+        node (s1, s2, Output o) = (s1, ( show s1 ++ "\nOut:" ++ o))
+        node (s1, _, _) = (s1, show s1) -}
+
+transducerToGraph :: Transducer -> Data.GraphViz.DotGraph Int
+transducerToGraph t = 
+    -- TODO differentiate between final and non-final states
+    let 
+        nodes = S.toList$ S.fromList $ map node $ labEdges $ graph t 
+        e = concatMap edge $ labEdges $ graph t 
+        params = nonClusteredParams {
+            globalAttributes = [
+                GraphAttrs [
+                    RankDir FromTop
+                    -- , Splines LineEdges 
+                    -- Splines SplineEdges
+                    -- ,Overlap ScaleOverlaps
+                    --,
+                    -- BgColor $ [toWColor $ RGB 247 247 247]
+                ],
+                NodeAttrs [
+                    Style [SItem Filled []],
+                    Shape BoxShape,
+                    FillColor $ toColorList [RGB 230 243 255],
+                    Color $ toColorList [ RGB 66 133 244],
+                    FontName $ TL.pack "Arial",
+                    Margin $ DVal 0.05
+                ],
+                EdgeAttrs [
+                    Style [SItem Bold []],
+                    ArrowSize 0.7,
+                    Color $ toColorList [ RGB 102 102 102]
+
+                ]
+            ],
+            fmtNode = \(n,l) -> [Label $ StrLabel $ TL.pack l],
+            fmtEdge = \(_,_,l) -> [
+                Label $ StrLabel $ TL.pack l,
+                FontName $ TL.pack "Arial",
+                FontSize 12.0
+            ]
+        }
+    in graphElemsToDot params nodes e
+    where
+        edge (s1, s2, Labeled l) = return $ (fromIntegral s1, fromIntegral s2, pp_l l)
+        edge (s1, s2, Call n e) = return $ (fromIntegral $ s1, fromIntegral $ s2, "call: " ++ n ++ "(" ++ show e ++ ")")
         edge (s1, _, _) = []
 
         node (s1, s2, Output o) = (s1, ( show s1 ++ "\nOut:" ++ o))
