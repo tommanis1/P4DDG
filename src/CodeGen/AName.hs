@@ -96,7 +96,7 @@ buildReturn p4context context t current_state =
     if single_call_return_pair  o then
         let
             (_, return, Labeled (NonTerminalCall name e)) = fst $ sort_single_call_pair o
-            (_, next, Call _) = snd $ sort_single_call_pair o
+            (_, next, Call _ _) = snd $ sort_single_call_pair o
             id = next_id $ returns context
             new_returns = (returns context) ++ [(id, return)]
 
@@ -118,7 +118,7 @@ gen_state_body p4context context t current_state =
         -- i ++  size context ++ " tmp_return = " ++ return_stack_name ++ ".pop();\n"
         --    i ++ "bit<" ++ size context ++"> tmp_return = " ++ return_stack_name ++ "[" ++ return_stack_index ++ "].val;\n"
            i ++ "// accepting state\n"
-           ++ i ++ "int<16> tmp_return;\n"
+           ++ i ++ "bit<16> tmp_return;\n"
            ++ i ++ "if (return_stack_index == 0) { tmp_return = 0;} else {\n"
            ++ i ++ "    "  ++ "tmp_return = " ++ return_stack_name ++ "[" ++ return_stack_index ++ "].val;" ++ return_stack_index ++ " = " ++ return_stack_index ++ " - 1;" ++"}\n"
 
@@ -132,7 +132,7 @@ gen_state_body p4context context t current_state =
     else if single_call_return_pair  o then
         let
             (_, return, Labeled (NonTerminalCall name e)) = fst $ sort_single_call_pair o
-            (_, next, Call _) = snd $ sort_single_call_pair o
+            (_, next, Call _ _) = snd $ sort_single_call_pair o
             id = (next_id $ returns context) - 2 -- TODO what is going wrong here 
             -- new_returns = (returns context) ++ [(id, return)]
 
@@ -155,17 +155,28 @@ gen_state_body p4context context t current_state =
             ++ (concatMap ((++) i_plus1) (map gen_constraint_transition (zip [0..] o)))
         ++ i ++ "}\n")
 
-    else if length (o) == 1 && all is_Bindings (labs o) then 
+    else if length (o) == 1 && all is_Stmts (labs o) then 
         let 
-            (_, target, Labeled (Bindings l)) = ( o) !! 0
+            (_, target, Labeled (Statements l)) = ( o) !! 0
         in 
-           (context, ((intercalate "\n" (map ((++) i) $ map show_Binding l))
+           (context, ((intercalate "\n" (map ((++) i) $ map id l))
            ++ i ++ "transition state_" ++ show target ++ ";"))
 
 
 
     else
-        error $ "gen - non implemented yet " ++ show o
+        case is_Constraints_one_e o of
+            (Just (x@(e, ifs) )) -> 
+                let (_, def, _) = e in
+                    (context,
+                    i ++ "bit<" ++ show (number_of_bits_needed_to_hold ((length o) + 1)) ++ "> tmp = 0;\n"
+                    ++ (concatMap ((++) i) $ map gen_constraint (zip [1..] ifs))
+                    ++ i ++ "transition select (tmp) { "++ i ++"0 : state_" ++ show def ++ ";\n"
+                        ++ (concatMap ((++) i_plus1) (map gen_constraint_transition (zip [1..] ifs)))
+                    ++ i ++ "}\n")
+            Nothing ->
+                error $ "gen - non implemented yet " ++ show o ++ "\n" ++
+                (show $ get_es o)
 
 
     -- case o of 
@@ -176,7 +187,7 @@ gen_state_body p4context context t current_state =
         gen_constraint :: (Int, Ledge) -> String
         gen_constraint (i, (_, _, Labeled (Constraint c))) =
             "if (" ++ c ++ "){" ++ "tmp = " ++ show i ++ ";}\n"
-        gen_constraint _ = error "gen_constraint on something other than a constraint"
+        gen_constraint x = error "gen_constraint on something other than a constrain : " ++ show x 
 
         gen_constraint_transition (i, (_, target, _)) =
             show i ++ " : " ++ mkStateName target ++ ";\n"
@@ -195,22 +206,44 @@ gen_state_body p4context context t current_state =
         is_constraint ( Labeled (Constraint _)) = True
         is_constraint _ = False
 
-        is_Bindings :: Transition -> Bool
-        is_Bindings ( Labeled(Bindings _)) = True
-        is_Bindings _ = False
+        is_Stmts :: Transition -> Bool
+        is_Stmts ( Labeled(Statements _)) = True
+        is_Stmts _ = False
         return_stack_name = "return_stack"
 
         show_Binding :: (String, String, String) -> String 
         show_Binding (t, id, e) = id ++ " = " ++ e ++ ";"
 
+        -- showStatements :: String -> String
+        is_Constraints_one_e :: [LEdge Transition] -> Maybe (LEdge Transition, [LEdge Transition])
+        is_Constraints_one_e o = do
+                    case get_es o of 
+                        [x@(_, _, _)] -> 
+                            let zz = get_ifs o in
+                            if null zz then Nothing else
+                                return(x, zz)
+                        _ ->  Nothing
+                        
+
+                        
+
+        
+        get_es :: [LEdge Transition] -> [LEdge Transition]
+        get_es o = 
+            let ifs = get_ifs o in
+            [x | x <- o , x `notElem` ifs]
+        
+        get_ifs :: [LEdge Transition] -> [LEdge Transition]
+        get_ifs o = [x | x@(_, _, (Labeled (Constraint _))) <- o]
+
 single_call_return_pair :: [Ledge] -> Bool
-single_call_return_pair [(_, _, Labeled (NonTerminalCall _ _)), (_, _, Call _)] = True
-single_call_return_pair [(_, _, Call _), (_, _, Labeled (NonTerminalCall _ _))] = True
+single_call_return_pair [(_, _, Labeled (NonTerminalCall _ _)), (_, _, Call _ _)] = True
+single_call_return_pair [(_, _, Call _ _), (_, _, Labeled (NonTerminalCall _ _))] = True
 single_call_return_pair _ = False
 
 sort_single_call_pair :: [Ledge] -> (Ledge, Ledge)
-sort_single_call_pair [f@(_, _, Labeled (NonTerminalCall _ _)), s@(_, _, Call _)] = (f,s)
-sort_single_call_pair [s@(_, _, Call _), f@(_, _, Labeled (NonTerminalCall _ _))] = (f,s)
+sort_single_call_pair [f@(_, _, Labeled (NonTerminalCall _ _)), s@(_, _, Call _ _)] = (f,s)
+sort_single_call_pair [s@(_, _, Call _ _), f@(_, _, Labeled (NonTerminalCall _ _))] = (f,s)
 
 
         --TODO
@@ -241,7 +274,7 @@ findVar context nonTerminalName =
     in 
         name
 
-{- 
+{-  
 state state_0 :
     packet.extract ethernet 
     transition state_6
@@ -254,11 +287,11 @@ header_stack_decl :: () -> Context -> String
 header_stack_decl _ c = 
     let s = integer_to_n_bits_needed_to_hold_that_integer . length . returns $ c
         array_decl = "return_stack_type[50] return_stack;"
-        array_type = "header return_stack_type { int<"++ "16" ++"> val;}" --"header return_stack_type { bit<"++ show s ++"> val;}"
+        array_type = "header return_stack_type { bit<"++ "16" ++"> val;}" --"header return_stack_type { bit<"++ show s ++"> val;}"
     in 
         indentation (indent c) ++ array_type ++ "\n"
         ++ indentation (indent c) ++ array_decl ++ "\n"
-        ++ indentation (indent c) ++ "int return_stack_index = 0;"
+        ++ indentation (indent c) ++ "bit<16> return_stack_index = 0;"
 
 
 -- bmv2 requires that all header fields are multiples of 8 bits

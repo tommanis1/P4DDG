@@ -34,7 +34,7 @@ type TEdgde = (Int, Int, Transition)
 data Transition = 
     Labeled Label
     | Output NonTerminalId
-    | Call Expression 
+    | Call String Expression 
     deriving (Show, Eq, Ord)
 
 type StateId = Int
@@ -95,13 +95,25 @@ rule_to_transducer s_map (Alternation r1 r2) = do
 
     return (s, f, t1 `u` (t2 `u` t3))
 
+rule_to_transducer s_map (KleineClosure r1) = do 
+    (s,f) <- fresh_2
+    (s1, f1, t1) <- rule_to_transducer s_map r1 
+    let t3 = insEdgesAndNodes [
+                (s, s1,  Labeled Epsilon)
+                , (f1, f,  Labeled Epsilon)
+                , (s, f,  Labeled Epsilon)
+                , (f1, s1,  Labeled Epsilon)
+            ] empty
+    return (s, f, t1 `u` t3)
+
+
 rule_to_transducer_label :: NonTerminalMap -> Label -> UniqueId (StateId, StateId, TransducerGraph)
 rule_to_transducer_label s_map l@(NonTerminalCall name e) = do
     (s,f) <- fresh_2
     let m_sa = M.lookup name s_map 
     case m_sa of 
         Just sa -> 
-            return (s, f, insEdgesAndNodes [(s, f, Labeled l),(s, sa, Call e )] empty)
+            return (s, f, insEdgesAndNodes [(s, f, Labeled l),(s, sa, Call name e )] empty)
         Nothing ->
             error $ "Error: rule_to_transducer_label\n can't find:" ++ show name
 rule_to_transducer_label s Empty = do
