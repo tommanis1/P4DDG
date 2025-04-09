@@ -21,7 +21,7 @@ p4TransducerToGraph :: P4Transducer -> DotGraph Int
 p4TransducerToGraph transducer =
   let
     -- Extract all states as nodes
-    nodes = map (\(state, stmts, _) -> (state, formatStmts state stmts)) transducer
+    nodes = (map (\(state, stmts, _) -> (state, formatStmts state stmts)) transducer) ++ [(-1, "state_continue")] 
     
     -- Extract all transitions as edges
     edges = concatMap (\(state, _, transitions) -> 
@@ -56,17 +56,38 @@ p4TransducerToGraph transducer =
   in graphElemsToDot params nodes edges
 
 -- Format statements for display in a node
+-- Format statements for display in a node
 formatStmts :: State -> [Stmt] -> String
 formatStmts state stmts = 
-  show state ++ "\n" ++ 
-  intercalate "\n" (map show stmts)
+    let stmtStr = pp_stmts stmts
+        -- Use \l for left alignment in GraphViz
+        alignedLines = map (++"\\l") (lines ("state_" ++ show state ++ ":\n" ++ stmtStr))
+    in concat alignedLines
 
 -- Convert a transition to an edge
 transitionToEdge :: State -> P4Transition -> [(Int, Int, String)]
-transitionToEdge source (If expr stmts target) = 
+transitionToEdge source (If expr stmts (Goto target)) = 
   [(source, target, "if " ++ show expr ++ 
-    (if not (null stmts) then "\n" ++ intercalate "\n" (map show stmts) else ""))]
+    (if not (null stmts) then "\n" ++ (pp_stmts stmts) else ""))]
+transitionToEdge source (If expr stmts (Accept)) = 
+  [(source, -1, "if " ++ show expr ++ 
+    (if not (null stmts) then "\n" ++ (pp_stmts stmts) else ""))]
+
+
 transitionToEdge source (Goto target) = 
   [(source, target, "goto")]
 transitionToEdge source Accept = 
   [(source, -1, "accept")]  -- Using -1 as a special "accept" state
+-- add a different name to the -1 state 
+pp_stmts :: [Stmt] -> String
+pp_stmts s = let x = (intercalate ";\n"$ map pp_stmt s )in if x == "" then "" else x ++ ";"
+
+pp_stmt :: Stmt -> String
+pp_stmt stmt = case stmt of
+    Extract field -> "extract(" ++ field ++ ")"
+    Do stmts -> intercalate "; " stmts
+    CodeGen.Continuation.Params params exprs -> 
+        intercalate "\n" $ map(\(p,e) ->  p ++ " = " ++ e) (zip params exprs)
+        -- "params(" ++ intercalate ", " params ++ ") = (" ++ 
+        -- intercalate ", " (map show exprs) ++ ")"
+    Push n -> "push(" ++ show n ++ ")"
