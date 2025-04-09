@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
 {-# LANGUAGE LambdaCase #-}
+{-# HLINT ignore "Redundant bracket" #-}
 module CodeGen.Continuation where
 import GrammarToTransducer
 import Data.Graph.Inductive
@@ -27,7 +28,7 @@ type State = Int
 --     | CallTransition ContinuationId
 
 data P4Transition =
-    If E [Stmt] State -- Goto S at the end
+    If E [Stmt] P4Transition -- Goto S at the end
     | Goto State
     | Accept
     deriving (Show, Eq)
@@ -101,7 +102,7 @@ convert g (transducer, p4transducer, c) =
 
             else (
                                             remve_one_trans
-                                            , ((s1', stmts, trans ++ [If e [] s2]):xs)
+                                            , ((s1', stmts, trans ++ [If e [] (Goto s2)]):xs)
                                             , c
                                         )
         (Labeled (Terminal t), s2) -> (
@@ -238,6 +239,17 @@ optimize (x@(s1, stmts, [Goto s2]):xs) constructed =
         else
             -- error $ show x ++ show xs ++ show new_todo ++ show (xs == new_todo )
             optimize new_todo new_constructed
+optimize (x@(s1, stmts, [Accept]):xs) constructed =
+    let
+        new_todo = reverse $ inline x xs []
+        new_constructed = reverse $ inline x constructed []
+    in
+        if xs == new_todo && constructed == new_constructed then
+            -- error $ show x ++ show xs ++ show new_todo
+            optimize xs (x:constructed)
+        else
+            -- error $ show x ++ show xs ++ show new_todo ++ show (xs == new_todo )
+            optimize new_todo new_constructed
 -- optimize (x@(s1, stmts, [If s2]):xs) constructed = optimize
 --     (inline x xs) (inline x constructed)
 optimize (x:xs) constructed = optimize xs (x:constructed)
@@ -249,30 +261,44 @@ transducer_to_p4 g t = convert' g (t, [], M.empty)
 inline :: (State, [Stmt], [P4Transition]) -> P4Transducer -> P4Transducer -> P4Transducer
 inline _ [] constructed = constructed
 inline (x@(state, stmts, [Goto target])) ((s, stmts2, trans2):xs) constructed =
-    let ifs = [if_ | if_@(If _ _ to) <- trans2, to == state] in
+    let ifs = [if_ | if_@(If _ _ (Goto to)) <- trans2, to == state] in
     
     if (Goto state) `elem` trans2 then
         let new_trans2 = map (\t -> if t == Goto state then Goto target else t) trans2
         in
             inline x xs ((s, stmts2 ++ stmts, new_trans2):constructed)
         -- update_goto 
-    -- else -- check guarded trans 
-    -- if not . null $ ifs then
-    --     let 
-    --         new_trans2 = update_ifs (state, stmts) trans2 in
-    --     inline x xs ((s, stmts2 ++ stmts, new_trans2):constructed)
+    else -- check guarded trans 
+    if not . null $ ifs then
+        let 
+            new_trans2 = update_ifs (state, stmts, (Goto target)) trans2 in
+        inline x xs ((s, stmts2, new_trans2):constructed)
     else
         inline x xs ((s, stmts2, trans2):constructed)
-
-update_ifs :: (State, [Stmt]) -> [P4Transition] -> [P4Transition]
+inline (x@(state, stmts, [Accept])) ((s, stmts2, trans2):xs) constructed =
+    let ifs = [if_ | if_@(If _ _ (Goto to)) <- trans2, to == state] in
+    
+    if (Goto state) `elem` trans2 then
+        let new_trans2 = map (\t -> if t == Goto state then Accept else t) trans2
+        in
+            inline x xs ((s, stmts2 ++ stmts, new_trans2):constructed)
+        -- update_goto 
+    else -- check guarded trans 
+    if not . null $ ifs then
+        let 
+            new_trans2 = update_ifs (state, stmts, Accept) trans2 in -- -1 indicates the accept, very ugly I know 
+        inline x xs ((s, stmts2, new_trans2):constructed)
+    else
+        inline x xs ((s, stmts2, trans2):constructed)
+update_ifs :: (State, [Stmt], P4Transition) -> [P4Transition] -> [P4Transition]
 update_ifs to_inline trans= map (update_if to_inline) trans
 
-update_if :: (State, [Stmt]) -> P4Transition -> P4Transition
-update_if(target, stmts) (If e stmts2 target2) =
-    if target == target2 then
+update_if :: (State, [Stmt], P4Transition) -> P4Transition -> P4Transition
+update_if(state, stmts, target) (If e stmts2 (Goto target2)) =
+    if state == target2 then
         If e (stmts ++ stmts2) target
     else
-        If e stmts2 target2
+        If e stmts2 (Goto target2)
 update_if _ x = x
 
 
@@ -344,7 +370,8 @@ gen_state (name, stmts, trans) =
             if not $ null other_transitions then 
                 if length other_transitions == 1 then
                     case head other_transitions of
-                        (Goto s) -> begin ++ gen_ifs (Just ("state_" ++ show s)) (zipWith (curry (\(If a b c, i)-> ((a, b, c), i))) ifs [1..] ) ++ "    }\n"
+                        (Goto s) -> begin ++ gen_ifs (Just ("state_" ++ show s)) (zipWith (curry (
+                            \(If a b c, i)-> ((a, b, c), i))) ifs [1..] ) ++ "    }\n"
                         (Accept) -> begin ++ gen_ifs (Just "state_continue") (zipWith (curry (\(If a b c, i)-> ((a, b, c), i))) ifs [1..] ) ++ "    }\n"
 
 
@@ -371,20 +398,26 @@ gen_tran :: P4Transition -> String
 gen_tran (Goto s) = "    transition state_" ++ show s ++ ";\n"
 gen_tran (Accept) = "    transition state_continue;\n"
 
-gen_ifs :: Maybe String -> [((E, [Stmt], State), Int)] -> String
+gen_ifs :: Maybe String -> [((E, [Stmt], P4Transition), Int)] -> String
 gen_ifs def ifs =
     let bit_length =compute_bit_width_8 $ length ifs + 1 in
     "    " ++ "bit<"++ show bit_length ++"> tmp = 0;\n" ++
     concatMap gen_if ifs ++
     "    transition select(tmp) {\n" ++
-    (concatMap (\((_, _, s), c) -> "       " ++ show c ++ " : " ++ "state_" ++ show s ++ ";\n") ifs) ++
+    (concatMap show_transition
+        
+         ifs) ++
     ((\case Nothing -> "" ; Just s -> "       0 :" ++ s ++ ";\n") def) ++
      "}\n"
 
-gen_if :: ((E, [Stmt], State), Int) -> String
+gen_if :: ((E, [Stmt], P4Transition), Int) -> String
 gen_if ((e, stmts, _), c) =
     "    if ("++ e ++")" ++ "{\n" ++
             concatMap (("    " ++ ) . gen_stmt) stmts ++
     "        " ++ "tmp = " ++ show c ++ ";\n" ++
 
     "    }"
+
+show_transition :: ((E, [Stmt], P4Transition), Int) -> String
+show_transition ((_, _, (Goto s)), c) = "       " ++ show c ++ " : " ++ "state_" ++ show s ++ ";\n";
+show_transition ((_, _, (Accept)), c) = "       " ++ show c ++ " : " ++ "state_continue" ++ ";\n";
