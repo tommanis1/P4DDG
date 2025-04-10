@@ -42,6 +42,7 @@ executable P4DDG
         TransducerToDot
         CodeGen.Continuation
         PaperExampleGrammars
+        P4TransducerToDot
     -- other-extensions:
     build-depends:
         base ^>=4.17.2.1,

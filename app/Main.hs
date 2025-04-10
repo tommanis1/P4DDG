@@ -155,6 +155,8 @@ main = do
 
           let dotgraph2 = P4Dot.p4TransducerToGraph o
           _ <- runGraphvizCommand Dot dotgraph2 Png ("debug-p4transducer-opt" ++ ".png")
+          let dotOutput = printDotGraph dotgraph2
+          writeFile ("debug-p4transducer-opt" ++ ".dot") (TL.unpack dotOutput)
           
           when (optimize settings) $ do
             putStrLn "Optimized P4 code"

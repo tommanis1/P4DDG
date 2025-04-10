@@ -66,18 +66,13 @@ formatStmts state stmts =
 
 -- Convert a transition to an edge
 transitionToEdge :: State -> P4Transition -> [(Int, Int, String)]
-transitionToEdge source (If expr stmts (Goto target)) = 
+transitionToEdge source (If expr stmts target) = 
   [(source, target, "if " ++ show expr ++ 
     (if not (null stmts) then "\n" ++ (pp_stmts stmts) else ""))]
-transitionToEdge source (If expr stmts (Accept)) = 
-  [(source, -1, "if " ++ show expr ++ 
-    (if not (null stmts) then "\n" ++ (pp_stmts stmts) else ""))]
-
-
 transitionToEdge source (Goto target) = 
   [(source, target, "goto")]
 transitionToEdge source Accept = 
-  [(source, -1, "accept")]  -- Using -1 as a special "accept" state
+  [(source, -1, "return")]  -- Using -1 as a special "accept" state
 -- add a different name to the -1 state 
 pp_stmts :: [Stmt] -> String
 pp_stmts s = let x = (intercalate ";\n"$ map pp_stmt s )in if x == "" then "" else x ++ ";"
