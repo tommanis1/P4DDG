@@ -8,7 +8,7 @@ Currently, this will only work when
 {-# HLINT ignore "Use camelCase" #-}
 module CodeGen.AName where
 import GrammarToTransducer
-import Grammar
+import DDG.Grammar
 import Data.Graph.Inductive hiding(size, Context)
 import Data.List (intercalate)
 

@@ -18,11 +18,20 @@ common warnings
 library
     import:           warnings
     exposed-modules:  
+        DDG.Types
+        DDG.P4DDG
         Parser
-        Grammar
-        GrammarToTransducer
-        CodeGen.AName
-        CodeGen.Continuation
+        -- DDG.Grammar
+
+
+        P4Types
+
+        Transducer.Def
+        Transducer.GrammarToTransducer
+        CodeGen.Continuations
+        -- CodeGen.Continuations
+        -- CodeGen.AName
+        -- CodeGen.Continuation
     -- other-modules:
     -- other-extensions:
     build-depends:    
@@ -32,7 +41,7 @@ library
         , fgl
         , megaparsec
         , text
-    hs-source-dirs:   src, src/codegen, src/DDG
+    hs-source-dirs:   src
     default-language: Haskell2010
 
 executable P4DDG
@@ -40,9 +49,10 @@ executable P4DDG
     main-is:          Main.hs
     other-modules:
         TransducerToDot
-        CodeGen.Continuation
-        PaperExampleGrammars
         P4TransducerToDot
+        -- CodeGen.Continuation
+        -- PaperExampleGrammars
+        -- P4TransducerToDot
     -- other-extensions:
     build-depends:
         base ^>=4.17.2.1,
@@ -53,6 +63,7 @@ executable P4DDG
         , P4DDG
         , megaparsec
         , mtl
+        , P4DDG
 
     hs-source-dirs:   app, tests, src
     default-language: Haskell2010
