@@ -3,14 +3,15 @@
 {-# LANGUAGE LambdaCase #-}
 {-# HLINT ignore "Redundant bracket" #-}
 module CodeGen.Continuation where
-import GrammarToTransducer
-import Data.Graph.Inductive
-import qualified GrammarToTransducer as T
+import Transducer.GrammarToTransducer
+import Data.Graph.Inductive hiding(Node, Edge)
+import qualified Transducer.GrammarToTransducer as T
 
-import GrammarToTransducer
-import Grammar
+import DDG.Grammar
 import qualified Data.Map as M
 import Data.List (intercalate)
+
+
 -- data v = P4Transducer
 
 -- data Action = 
@@ -19,7 +20,26 @@ import Data.List (intercalate)
 
 -- data StateLabel = StateLabel StateType [Action]
 
--- data StateType = Output | Normal
+data P4StateMachine = P4StateMachine {
+    startState :: Integer,
+    graph :: P4ParserGraph
+}
+
+type TEdgde = (Integer, Integer, Transition)
+data Transition = E Expression | Otherwise
+
+type TNode = (Integer, Stmts)
+
+data Stmts = 
+    Push Integer
+    | Pop Integer
+    | Extract String
+    | Bind String String
+    | Seq Stmts Stmts
+
+
+    
+    -- data StateType = Output | Normal
 type State = Int
 -- data Transition = 
 --     GuardedTransition Expression State
@@ -27,16 +47,16 @@ type State = Int
 --     | ReturnTransition
 --     | CallTransition ContinuationId
 
-data P4Transition =
-    If E [Stmt] State -- Goto S at the end
+data P4Transition e =
+    If e [Stmt] State -- Goto S at the end
     | Goto State
     | Accept
     deriving (Show, Eq)
 
-data Stmt =
+data Stmt e =
     Extract String
     | Do [String] -- Host language stmts
-    | Params [String] [E]
+    | Params [String] [e]
     | Push Int deriving (Show, Eq)
 
 type TransducerFormatted = [(State, [(T.Transition, State)])]
@@ -45,6 +65,14 @@ type P4Transducer = [(State, [Stmt], [P4Transition])]
 type E = String
 
 type Continuations = M.Map Int Int
+
+type Nodes = M.Map Integer [Stmt]
+data P4CFG = P4CFG Nodes [Edge String]
+
+data Label e = Else | E e
+data Edge e = Edge Integer e Integer
+
+
 
 -- format :: T.Transducer -> Transducer
 
@@ -71,6 +99,106 @@ get_continuation state c =
     case M.lookup state c of
             Just e -> (e, c)
             Nothing -> (1+(M.size c), M.insert state (1+(M.size c)) c) 
+
+-- toCFG :: P4Transducer -> P4CFG
+-- toCFG
+
+
+-- convertCFG :: Continuations -> (State, [(T.Transition, State)]) -> P4CFG
+-- convertCFG continuations (id, out) = 
+
+
+{- convertCFG :: Grammar -> Continuations -> (TransducerFormatted, P4CFG) -> (TransducerFormatted, P4CFG)
+convertCFG g cs ([(s1, [] )], xs)  =
+    -- assert s1 == s1'
+    ([], xs )
+convertCFG g cs (((s1, [] ):(s2, out):transducer), (P4CFG nodes edges))  =
+    -- assert s1 == s1'
+    (((s2, out):transducer), (P4CFG (M.insert (toInteger s2) [] nodes ) edges) )
+ -}
+-- convertCFG g cs (([]), xs, cs)  =
+--     -- assert s1 == s1'
+--     ([], xs, cs)
+-- convertCFG g cs (x@(s1, _):transducer, [])  =
+--     (x:transducer, [(s1, []::[Stmt], []::[P4Transition])], cs)
+
+{- convertCFG grammar continuations (transducer, cf_graph) = 
+    let 
+        (s1, (h : out)):rest_transducer = transducer
+        remve_one_trans = (s1, out):rest_transducer
+         in
+    case h of 
+        (Labeled (Constraint e), s2) -> 
+            if any (not . is_constraint ) out then 
+                let else_cases = filter (not . is_constraint) out in
+                if length else_cases /= 1 then
+                    error "For a state with guarded transitions, there are more than 1 [else] transitions"
+                else 
+                    
+                    
+                    error $ "not implemented : " ++ (show (s1, (h : out)))
+
+            else (
+                                            remve_one_trans
+                                            , ((s1', stmts, trans ++ [If e [] s2]):xs)
+                                            , c
+                                        )
+        (Labeled (Terminal t), s2) -> (
+                                            remve_one_trans
+                                            , ((s1', stmts ++ [Extract t], trans ++ [Goto s2]):xs)
+                                            , c
+                                        )   
+
+        (Labeled (Statements s), s2) -> (
+                                            remve_one_trans
+                                            , ((s1', stmts ++ [Do s], trans ++ [Goto s2]):xs)
+                                            , c
+                                        )
+        (Call f1 x1, s2)             ->
+            let 
+                filt = (\case (Labeled(NonTerminalCall f2 x2), _) -> (f1 == f2 && x1 == x2); _ -> False)
+                -- remove corresponding return transition
+                [(Labeled(NonTerminalCall f2 x2), s3)] = filter filt out
+                new_out = filter (\x -> not . filt $ x) out
+                new_transducer = (s1, new_out):rest_transducer
+                (continuation, new_c) = get_continuation s3 c
+                ps = map (\(Param _ id) -> id) $ params g f1
+                es = wordsWhen (== ',') x1
+            in
+             (
+                                            new_transducer
+                                            ,((s1', stmts ++ [Params ps es, Push continuation], trans ++ [Goto s2]):xs)
+                                            , new_c
+                                        )
+
+
+        
+        (Labeled(NonTerminalCall f2 x2),s3) ->
+             let 
+                filt = (\case (Call f1 x1, _) -> (f1 == f2 && x1 == x2); _ -> False)
+                [(Call f1 x1, s2)] = filter filt out
+                new_out = filter (\x -> not . filt $ x) out
+                new_transducer = (s1, new_out):rest_transducer
+                (continuation, new_c) = get_continuation s3 c
+                ps = map (\(Param _ id) -> id) $ params g f1
+                es = wordsWhen (== ',') x1
+            in
+
+                            (
+                            new_transducer
+                            ,((s1', stmts ++ [Params ps es, Push continuation], trans ++ [Goto s2]):xs)
+                            , new_c
+                        )
+
+
+        (Output _, s2) -> 
+            (
+                remve_one_trans
+                , ((s1', stmts, trans++ [Accept]):xs)
+                , c
+            ) -}
+-- convert g (a, b, c) = 
+--     error $ "convert: " ++ show a ++ show b ++ show c
 
 convert :: Grammar -> (TransducerFormatted, P4Transducer, Continuations) -> (TransducerFormatted, P4Transducer, Continuations)
 convert g ([(s1, [] )], xs, cs)  =
@@ -389,3 +517,6 @@ gen_if ((e, stmts, _), c) =
     "        " ++ "tmp = " ++ show c ++ ";\n" ++
 
     "    }"
+
+    
+      
