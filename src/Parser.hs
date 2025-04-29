@@ -22,7 +22,7 @@ import DDG.P4DDG
 
 import P4Types
 import Text.Megaparsec.Error (errorBundlePretty)
-
+import Text.Megaparsec (parseTest)
 prettyError :: (VisualStream s, ShowErrorComponent e, TraversableStream s) =>
                ParseErrorBundle s e -> String
 prettyError = errorBundlePretty
@@ -309,6 +309,7 @@ parse_Sequence = do
 parse_Term :: Parser Parser.Rule
 parse_Term = choice [
     try parse_KleineClosure,
+    try $ parse_If,
     parse_Factor
   ] <?> "parse_Term"
 
@@ -325,3 +326,41 @@ parse_KleineClosure = do
   factor <- parse_Factor
   symbol "*"
   return (KleineClosure factor)
+
+
+parse_If :: Parser Parser.Rule
+parse_If = do
+  symbol "if"
+  symbol "["
+  cond <- parse_constraint_expression
+  symbol "]"
+  symbol "then"
+  thenBranch <- parse_Rule
+  elseBranch <- optional $ do
+    symbol "else"
+    parse_Rule
+  if (isNothing elseBranch)
+    then return $ Sequence (DDG.Types.Label $ Constraint cond) (thenBranch)
+    else
+        do
+          let if_ = Sequence (DDG.Types.Label $ Constraint cond) (thenBranch)
+          let else_ =  Sequence (DDG.Types.Label $ Constraint (Not $ cond)) (fromJust elseBranch)
+          return $ Alternation if_ else_ 
+  <?> "parse_If"
+
+-- parse_Case :: Parser Parser.Rule
+-- parse_Case = do
+--   lexeme $ string "case"
+--   expr <- parse_Expression
+--   lexeme $ string "of"
+--   lexeme $ char '{'
+--   branches <- sepBy1 parse_CaseBranch (lexeme $ char ';')
+--   lexeme $ char '}'
+--   return (Case expr branches)
+
+-- parse_CaseBranch :: Parser (e, Rule e)
+-- parse_CaseBranch = do
+--   pattern <- parse_Expression
+--   lexeme $ string "->"
+--   rule <- parse_Rule
+--   return (pattern, rule)
