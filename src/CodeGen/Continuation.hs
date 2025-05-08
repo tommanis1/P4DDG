@@ -249,13 +249,13 @@ convert g (transducer, p4transducer, c) =
                 [(T.Labeled(NonTerminalCall f2 x2), s3)] = filter filt out
                 new_out = filter (\x -> not . filt $ x) out
                 new_transducer = (s1, new_out):rest_transducer
-                (continuation, new_c) = get_continuation s3 c
+                (continuation, new_c) = get_continuation s2 c
                 ps = map (\(Param _ id) -> id) $ params g f1
                 es = wordsWhen (== ',') x1
             in
              (
                                             new_transducer
-                                            ,((s1', stmts ++ [Params ps es, Push continuation], trans ++ [Goto s2]):xs)
+                                            ,((s1', stmts ++ [Params ps es, Push continuation], trans ++ [Goto s3]):xs)
                                             , new_c
                                         )
 
@@ -267,14 +267,14 @@ convert g (transducer, p4transducer, c) =
                 [(T.Return f1 x1, s2)] = filter filt out
                 new_out = filter (\x -> not . filt $ x) out
                 new_transducer = (s1, new_out):rest_transducer
-                (continuation, new_c) = get_continuation s3 c
+                (continuation, new_c) = get_continuation s2 c
                 ps = map (\(Param _ id) -> id) $ params g f1
                 es = wordsWhen (== ',') x1
             in
 
                             (
                             new_transducer
-                            ,((s1', stmts ++ [Params ps es, Push continuation], trans ++ [Goto s2]):xs)
+                            ,((s1', stmts ++ [Params ps es, Push continuation], trans ++ [Goto s3]):xs)
                             , new_c
                         )
 
