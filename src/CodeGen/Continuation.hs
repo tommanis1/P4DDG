@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module CodeGen.Continuation where
 import Transducer.GrammarToTransducer
 import Data.Graph.Inductive hiding(Node, Edge)
@@ -434,15 +435,15 @@ to_p4 g c t =
             "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n" ++
             gen_fun_param_decls g
         (Nonterminal parserName _ _) = head g
-        (i_init, _, _) = head t
+        i_init = minimum $ map (\(i, _, _) -> i) t
         parserDecl = 
             "parser " ++ parserName ++ "(packet_in packet,\n" ++
             "    out headers hdr,\n" ++
-            "    inout metadata meta,\n" ++
+            "    inout metadata_t meta,\n" ++
             "    inout standard_metadata_t standard_metadata) {\n"
         initialState = "state start {\ntransition state_" ++ show i_init ++ ";\n}\n"
     in
-        globDecls ++ parserDecl ++ parserDecls ++ initialState ++ gen_states t ++ gen_return_state c ++ "}\n"
+        globDecls ++ parserDecl ++ parserDecls ++ initialState ++ gen_states t ++ gen_return_state t c ++ "}\n"
         
 
 -- gen_preamble :: Grammar -> P4Transducer -> Int -> Int -> String
@@ -454,8 +455,10 @@ to_p4 g c t =
 --         "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n" ++
 --         gen_fun_param_decls grammar
 
-gen_return_state :: Continuations -> String
-gen_return_state c = let 
+gen_return_state :: P4Transducer -> Continuations -> String
+gen_return_state t c = let 
+    -- stateIds = map (\(i, _, _ ) -> i) t 
+    -- c :: Continuations = M.filterWithKey (\k _ -> k `elem` stateIds) c
     size = show (compute_bit_width_8 (length c+1)) in 
     "state state_continue {\n" ++
     "    bit<"++ size ++"> tmp_return;\n" ++
@@ -543,4 +546,4 @@ gen_if ((e, stmts, _), c) =
       
 expressionToP4 :: (DDG.P4DDG.E P4Types.Expression) -> String
 expressionToP4 (DDG.P4DDG.E e) = ppP4E e
-expressionToP4 (DDG.P4DDG.Not e) = "!" ++ expressionToP4 e
+expressionToP4 (DDG.P4DDG.Not e) = "!(" ++ expressionToP4 e ++ ")"
