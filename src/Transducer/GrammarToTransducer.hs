@@ -485,3 +485,9 @@ update (s, to) g =
     --     outgoing s =  [ e | e@(from, to, _)<- labEdges g, from == s]
     --     singletonEpsilon [(_, _, T.Labeled Epsilon)] = True
     --     singletonEpsilon _= False
+
+{- epsilonElimination :: T.P4Transducer -> T.P4Transducer
+epsilonElimination t = t{T.graph = epsilonElimination' $ T.graph t}
+
+epsilonElimination' :: Gr l el -> Gr l el
+ -}

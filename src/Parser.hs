@@ -1,6 +1,7 @@
 {-# LANGUAGE GHC2021 #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use camelCase" #-}
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
 
 module Parser where
 
@@ -285,9 +286,15 @@ parse_type = do
 parse_Id = parse_string 
 parse_Expression = parse_string
 parse_Terminal :: Parser Parser.Label
-parse_Terminal = Terminal <$>  terminalChar <?> "parse_Terminal"
+parse_Terminal = Terminal <$> terminalChar <?> "parse_Terminal"
+
 terminalChar :: Parser String
-terminalChar = lexeme (some (satisfy (\c -> isAlphaNum c || c == '_' || c == '-' || c == '.')))
+terminalChar = lexeme $ do
+  str <- some (satisfy (\c -> isAlphaNum c || c == '_' || c == '-' || c == '.'))
+  if str `elem` ["if", "else", "case", "of", "then"]
+    then fail $ "Keyword " ++ show str ++ " is not allowed as a terminal"
+    else return str
+
 
 parse_Rule :: Parser Parser.Rule
 parse_Rule = parse_Alternation <?> "parse_Rule"
@@ -310,6 +317,7 @@ parse_Term :: Parser Parser.Rule
 parse_Term = choice [
     try parse_KleineClosure,
     try $ parse_If,
+    try $ parse_Case,
     parse_Factor
   ] <?> "parse_Term"
 
@@ -348,19 +356,66 @@ parse_If = do
           return $ Alternation if_ else_ 
   <?> "parse_If"
 
--- parse_Case :: Parser Parser.Rule
--- parse_Case = do
---   lexeme $ string "case"
---   expr <- parse_Expression
---   lexeme $ string "of"
---   lexeme $ char '{'
---   branches <- sepBy1 parse_CaseBranch (lexeme $ char ';')
---   lexeme $ char '}'
---   return (Case expr branches)
+parse_Case :: Parser Parser.Rule
+parse_Case = do
+  symbol "case"
+  expr <- parse_any_expression_until "of"
+  symbol "of"
+  branches <- many parse_CaseBranch
+  (return $ desugarCase expr branches) <?> "parse_Case"
+  
 
--- parse_CaseBranch :: Parser (e, Rule e)
--- parse_CaseBranch = do
---   pattern <- parse_Expression
---   lexeme $ string "->"
---   rule <- parse_Rule
---   return (pattern, rule)
+parse_CaseBranch :: Parser ((DDG.P4DDG.E P4Types.Expression), Parser.Rule)
+parse_CaseBranch = do
+  symbol "%"
+  patt <- parse_any_expression_until "->"
+  lexeme $ string "->"
+  rule <- parse_Rule
+  symbol "%"
+  return (patt, rule) <?> "parse_CaseBranch"
+strip :: String -> String
+strip = dropWhile isSpace . reverse . dropWhile isSpace . reverse
+
+desugarCase :: DDG.P4DDG.E P4Types.Expression -> [((DDG.P4DDG.E P4Types.Expression), Parser.Rule)] -> Parser.Rule
+desugarCase expr [(pattern, rule)] = 
+  let condition = makeEqualityCondition expr pattern in
+  if (strip $ P4Types.self . DDG.P4DDG.underlying $ pattern) == "_" then
+    -- If the pattern is "_", treat it as a catch-all case
+    rule
+  else
+    Sequence (DDG.Types.Label $ Constraint condition) rule
+desugarCase expr ((pattern, rule):rest) = 
+  if (strip $ P4Types.self . DDG.P4DDG.underlying $ pattern) == "_" then
+    -- If the pattern is "_", treat it as a catch-all case
+    let remainingBranches = desugarCase expr rest
+    in 
+      error $ show $ (P4Types.self . DDG.P4DDG.underlying $ pattern) == "_" ++ (P4Types.self . DDG.P4DDG.underlying $ pattern) ++ "test"
+      --Alternation rule remainingBranches
+  else
+  -- Create equality condition between case expression and pattern
+  let condition = makeEqualityCondition expr pattern
+      -- Handle this branch
+      thisBranch = Sequence (DDG.Types.Label $ Constraint condition) rule
+      -- Recursively handle remaining branches
+      remainingBranches = desugarCase expr rest
+  in Alternation thisBranch remainingBranches
+
+makeEqualityCondition :: DDG.P4DDG.E P4Types.Expression -> DDG.P4DDG.E P4Types.Expression -> DDG.P4DDG.E P4Types.Expression
+makeEqualityCondition 
+  (E e1) (E e2) =
+    E $ P4Types.Expression{P4Types.self = (self e1) ++ " == " ++ (self e2), exprType = Nothing}
+
+parse_any_expression :: Parser (DDG.P4DDG.E P4Types.Expression)
+parse_any_expression = do
+  -- Consume all tokens until we see a closing bracket
+  content <- manyTill anySingle (lookAhead (char ']'))
+  return $ DDG.P4DDG.E $ P4Types.Expression{P4Types.self = content, exprType = Nothing}
+  <?> "parse_any_expression"
+
+parse_any_expression_until :: String -> Parser (DDG.P4DDG.E P4Types.Expression)
+parse_any_expression_until endToken = do
+  -- Consume all tokens until we see the specified end token
+  content <- manyTill anySingle (lookAhead (string endToken))
+  -- Return the expression with the collected content
+  return $ DDG.P4DDG.E $ P4Types.Expression{P4Types.self = content, exprType = Nothing}
+  <?> "parse_any_expression"

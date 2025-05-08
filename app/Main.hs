@@ -10,6 +10,7 @@ module Main where
 import DDG.Types
 import TransducerToDot
 import CodeGen.Continuations
+import qualified CodeGen.Continuation as C
 import qualified P4TransducerToDot as P4Dot
 
 -- import qualified CodeGen.AName as AName
@@ -20,7 +21,7 @@ import Data.Graph.Inductive.Query.DFS
 import Data.GraphViz.Types hiding (parse)
 import System.Console.GetOpt
 import System.Environment (getArgs)
-import System.Exit (exitSuccess)
+import System.Exit (exitSuccess, exitFailure)
 import System.IO (hPutStrLn, stderr)
 import qualified Data.Text.Lazy as TL
 import Parser
@@ -29,6 +30,7 @@ import Text.Megaparsec.Char
 import qualified Data.Text as T
 import qualified Text.Megaparsec.Char.Lexer as L
 import Control.Monad
+import Transducer.Def(format)
 -- import qualified CodeGen.Continuation as C
 
 data Settings = Settings {
@@ -115,7 +117,6 @@ argparse = do
       showHelp
       error "Failed to parse arguments"
 
--- GENERATED WITH AN LLM
 showHelp :: IO ()
 showHelp = do
   let header = "Usage: program [OPTIONS] [input_file]"
@@ -124,18 +125,20 @@ showHelp = do
 
 main :: IO ()
 main = do
-  settings <- argparse
-  putStrLn $ "Using settings: " ++ show settings
-  
+  settings <- argparse  
   input_file_contents <- readFile $ input_file settings
 
   case parse parse_Grammar "" input_file_contents of
-    (Left e) -> putStrLn $ Parser.prettyError e
+    (Left e) -> do 
+        putStrLn $ Parser.prettyError e
+        exitFailure
     (Right ddg) -> do 
       when (debug settings) $ do
         putStrLn "Parsed grammar:"
         putStrLn $ pp_Grammar ddg
         print $ ddg
+
+        putStrLn $ prettifyDDG ddg
       --   putStrLn "Parsed grammar (with params):"
       --   putStrLn $ pp_Grammar $ inlineNonterminalsWithoutParams ddg
       -- -- print $ show ddg
@@ -176,9 +179,22 @@ main = do
             print p4t
             let dotgraph2 = P4Dot.p4TransducerToGraph p4t
             _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
+
+            let p4code =  mkP4 p4t
+            putStrLn "P4 code"
+            putStrLn $ p4code
             print "done"
 
           print "done"
+        "continuations-old" -> do
+          let (p4t, c) = C.transducer_to_p4 ddg $ format transducer
+          let o = C.optimize p4t []
+          let code = C.to_p4 ddg c o
+          putStrLn code
+
+        x -> do
+          putStrLn $ "Unknown backend: " ++ x
+          error $ "Unknown backend: " ++ x
       --     let (p4t, c) = C.transducer_to_p4 ddg $ C.format transducer
       --     let o = C.optimize p4t []
       --     when (debug settings) $ do

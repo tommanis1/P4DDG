@@ -49,7 +49,7 @@ p4TransducerToGraph transducer =
       fmtEdge = \(_, _, l) -> [
         Label $ StrLabel $ TL.pack l,
         FontName $ TL.pack "Arial",
-        FontSize 12.0
+        FontSize 24.0
       ]
     }
   in graphElemsToDot params nodes edges
@@ -66,7 +66,7 @@ formatStmts state stmts =
 transitionToEdge :: (Int, Int, (Transition (DDG.P4DDG.E P4Types.Expression))) -> [(Int, Int, String)]
 transitionToEdge (source, target, Otherwise) = [(source , target, "otherwise")]
 transitionToEdge (source, target, CodeGen.Continuations.E expr) = 
-  [(source, target, "expr: " ++ show expr)]
+  [(source, target, "expr: " ++ pp expr)]
 -- transitionToEdge source (If expr stmts target) = 
 --   [(source, target, "if " ++ show expr ++ 
 --     (if not (null stmts) then "\n" ++ (pp_stmts stmts) else ""))]

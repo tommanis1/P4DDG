@@ -1,9 +1,12 @@
 {-# LANGUAGE ExistentialQuantification #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use camelCase" #-}
 
 module DDG.Types where
-import DDG.P4DDG
-import P4Types
+import DDG.P4DDG 
+import P4Types hiding (pp)
 import Data.List (intercalate)
+
 data Show e => Rule e = 
     KleineClosure (Rule e)
     | Alternation (Rule e) (Rule e)
@@ -88,7 +91,7 @@ type NonTerminalId = String
 type Id = String
 type Expression = String
 type Type = String
-pp_l :: (Show e) => Label e -> String
+pp_l :: Label (DDG.P4DDG.E P4Types.Expression) -> String
 pp_l Epsilon = "e"
 pp_l Empty = "empty"
 pp_l (Terminal s) = s
@@ -96,26 +99,62 @@ pp_l (NonTerminalCall n e) = n ++ "(" ++ e ++ ")"
 -- pp_l (Bindings b) = intercalate "\n" $ map pp_binding b
 pp_l (Statements s) = intercalate "\n" s
 
-pp_l (Constraint e) = "[" ++ (show e) ++ "]"
+pp_l (Constraint e) = "[" ++ (pp e) ++ "]"
 
 pp_binding (t, n, e) = 
     t ++ " "++ n ++ ":=" ++ e
 
-pp :: (Show e) => Rule e  -> String
-pp (KleineClosure r) = "(" ++ pp r ++ ")" ++ "*"
-pp (Alternation r1 r2) = "(" ++ "(" ++ pp r1 ++ ")" ++ "|" ++ "(" ++ pp r2 ++ ")"++ ")"
-pp (Sequence r1 r2) = "(" ++ pp r1 ++ ")" ++ "(" ++ pp r2 ++ ")"
-pp (Label l) = pp_l l
+ppr ::  Rule (DDG.P4DDG.E P4Types.Expression)  -> String
+ppr (KleineClosure r) = "(" ++ ppr r ++ ")" ++ "*"
+ppr (Alternation r1 r2) = "(" ++ "(" ++ ppr r1 ++ ")" ++ "|" ++ "(" ++ ppr r2 ++ ")"++ ")"
+ppr (Sequence r1 r2) = "(" ++ ppr r1 ++ ")" ++ "(" ++ ppr r2 ++ ")"
+ppr (Label l) = pp_l l
 
 pp_Grammar :: Grammar -> String
 pp_Grammar = unlines . map pp_nonterminal
     where
-        pp_nonterminal (Nonterminal n [] r) = n ++ " = " ++ pp r
-        pp_nonterminal (Nonterminal n params r) = n ++ "(" ++ pp_params  params++ ") = " ++ pp r
+        pp_nonterminal (Nonterminal n [] r) = n ++ " = " ++ ppr r
+        pp_nonterminal (Nonterminal n params r) = n ++ "(" ++ pp_params  params++ ") = " ++ ppr r
 pp_params :: [Param] -> String
 pp_params params = intercalate ", " $ map print params 
     where 
         print (Param t id) = t ++ " " ++ id 
 
+prettifyDDG :: Grammar -> String
+prettifyDDG grammar = intercalate "\n\n" (map prettifyNonterminal grammar)
+  where
+    prettifyNonterminal :: Nonterminal -> String
+    prettifyNonterminal (Nonterminal ntId params rule) = 
+      ntId ++ "(" ++ intercalate ", " (map prettifyParam params) ++ ") ::= \n  " ++ 
+      indent 2 (prettifyRule rule)
+    
+    prettifyParam :: Param -> String
+    prettifyParam (Param typ ident) = show typ ++ " " ++ ident
+    
+    indent :: Int -> String -> String
+    indent n str = unlines (map (replicate n ' ' ++) (lines str))
 
--- pp_Grammar = ... 
+prettifyRule :: Rule (E P4Types.Expression) -> String
+prettifyRule = go 0
+  where
+    go :: Int -> Rule (E P4Types.Expression) -> String
+    go indent rule = case rule of
+      KleineClosure r -> 
+        "(" ++ go indent r ++ ")*"
+      
+      Alternation r1 r2 -> 
+        "(" ++ go (indent + 1) r1 ++ ")" ++ "\n" ++ replicate indent ' ' ++ "| " ++ "(" ++ go (indent + 1) r2 ++ ")"
+      
+      Sequence r1 r2 -> 
+        go indent r1 ++ "\n" ++ go indent r2
+      
+      Label label -> prettyLabel indent label
+    
+    prettyLabel :: Int -> Label (E P4Types.Expression) -> String
+    prettyLabel indent label = case label of
+      Epsilon -> "ε"
+      Empty -> "∅"
+      Terminal str -> "\"" ++ str ++ "\""
+      NonTerminalCall ntId str -> ntId ++ "(" ++ str ++ ")"
+      Statements stmts -> "{" ++ intercalate "; " stmts ++ "}"
+      Constraint e -> "[" ++ DDG.P4DDG.pp e ++ "]"

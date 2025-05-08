@@ -29,7 +29,7 @@ library
         Transducer.Def
         Transducer.GrammarToTransducer
         CodeGen.Continuations
-        -- CodeGen.Continuations
+        CodeGen.Continuation
         -- CodeGen.AName
         -- CodeGen.Continuation
     -- other-modules:

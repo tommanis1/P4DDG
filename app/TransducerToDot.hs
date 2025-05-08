@@ -28,8 +28,10 @@ transducerToGraph t =
         params = nonClusteredParams {
             globalAttributes = [
                 GraphAttrs [
-                    RankDir FromLeft
-                    -- , Splines LineEdges 
+                    Splines SplineEdges
+                    -- RankDir FromLeft
+                    -- , Overlap Compress
+                    -- , Splines Ortho 
                     -- Splines SplineEdges
                     -- ,Overlap ScaleOverlaps
                     --,
@@ -54,7 +56,7 @@ transducerToGraph t =
             fmtEdge = \(_,_,l) -> [
                 Label $ StrLabel $ TL.pack l,
                 FontName $ TL.pack "Arial",
-                FontSize 12.0
+                FontSize 18.0
             ]
         }
     in graphElemsToDot params nodes e
