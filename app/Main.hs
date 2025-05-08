@@ -12,7 +12,7 @@ import TransducerToDot
 import CodeGen.Continuations
 import qualified CodeGen.Continuation as C
 import qualified P4TransducerToDot as P4Dot
-
+import qualified P4TransducerToDotOld as P4DotOld
 -- import qualified CodeGen.AName as AName
 import Transducer.GrammarToTransducer
 import Data.GraphViz.Commands
@@ -31,6 +31,7 @@ import qualified Data.Text as T
 import qualified Text.Megaparsec.Char.Lexer as L
 import Control.Monad
 import Transducer.Def(format)
+import DDG.LeftFactor
 -- import qualified CodeGen.Continuation as C
 
 data Settings = Settings {
@@ -175,8 +176,8 @@ main = do
         "continuations" -> do
           let p4t = mkP4Transducer ddg transducer
           when (debug settings) $ do
-            putStrLn "Original abstract P4"
-            print p4t
+            -- putStrLn "Original abstract P4"
+            -- print p4t
             let dotgraph2 = P4Dot.p4TransducerToGraph p4t
             _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
 
@@ -185,10 +186,19 @@ main = do
             putStrLn $ p4code
             print "done"
 
+{-             let (Nonterminal _ _ r) = head ddg
+
+            print$ findLongestCommonPrefix (r)
+            print$ leftFactor (r) -}
+
           print "done"
         "continuations-old" -> do
           let (p4t, c) = C.transducer_to_p4 ddg $ format transducer
           let o = C.optimize p4t []
+          
+          let dotgraph2 = P4DotOld.p4TransducerToGraph o
+          _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
+
           let code = C.to_p4 ddg c o
           putStrLn code
 

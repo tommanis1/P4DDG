@@ -50,6 +50,7 @@ executable P4DDG
     other-modules:
         TransducerToDot
         P4TransducerToDot
+        P4TransducerToDotOld
         -- CodeGen.Continuation
         -- PaperExampleGrammars
         -- P4TransducerToDot

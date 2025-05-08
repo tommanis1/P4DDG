@@ -425,16 +425,34 @@ format transducer =
 
 to_p4 :: Grammar -> Continuations -> P4Transducer -> String
 to_p4 g c t =
-    (gen_preamble g t (length c + 1 ) 16) ++ gen_states t ++ gen_return_state c
+    let
+        stack_size = 16
+        n_continuations = length c + 1
+        globDecls = "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n"
+        parserDecls = 
+            "return_stack_type["++ show stack_size++"] return_stack;\n" ++
+            "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n" ++
+            gen_fun_param_decls g
+        (Nonterminal parserName _ _) = head g
+        (i_init, _, _) = head t
+        parserDecl = 
+            "parser " ++ parserName ++ "(packet_in packet,\n" ++
+            "    out headers hdr,\n" ++
+            "    inout metadata meta,\n" ++
+            "    inout standard_metadata_t standard_metadata) {\n"
+        initialState = "state start {\ntransition state_" ++ show i_init ++ ";\n}\n"
+    in
+        globDecls ++ parserDecl ++ parserDecls ++ initialState ++ gen_states t ++ gen_return_state c ++ "}\n"
+        
 
-gen_preamble :: Grammar -> P4Transducer -> Int -> Int -> String
-gen_preamble grammar p4t n_continuations stack_size= 
-        "// Place this header definition outside of your parser\n" ++
-        "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n" ++
-        "// Make these global variables of the parser\n" ++
-        "return_stack_type["++ show stack_size++"] return_stack;\n" ++
-        "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n" ++
-        gen_fun_param_decls grammar
+-- gen_preamble :: Grammar -> P4Transducer -> Int -> Int -> String
+-- gen_preamble grammar p4t n_continuations stack_size= 
+--         "// Place this header definition outside of your parser\n" ++
+--         "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n" ++
+--         "// Make these global variables of the parser\n" ++
+--         "return_stack_type["++ show stack_size++"] return_stack;\n" ++
+--         "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n" ++
+--         gen_fun_param_decls grammar
 
 gen_return_state :: Continuations -> String
 gen_return_state c = let 
@@ -524,4 +542,5 @@ gen_if ((e, stmts, _), c) =
     
       
 expressionToP4 :: (DDG.P4DDG.E P4Types.Expression) -> String
-expressionToP4 x = "tmp e"
+expressionToP4 (DDG.P4DDG.E e) = ppP4E e
+expressionToP4 (DDG.P4DDG.Not e) = "!" ++ expressionToP4 e
