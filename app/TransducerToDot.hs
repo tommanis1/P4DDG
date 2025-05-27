@@ -28,7 +28,8 @@ transducerToGraph t =
         params = nonClusteredParams {
             globalAttributes = [
                 GraphAttrs [
-                    Splines SplineEdges
+                     RankDir FromTop
+                    -- Splines SplineEdges
                     -- RankDir FromLeft
                     -- , Overlap Compress
                     -- , Splines Ortho 

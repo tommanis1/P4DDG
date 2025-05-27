@@ -67,7 +67,7 @@ formatStmts state stmts =
 -- Convert a transition to an edge
 transitionToEdge :: State -> P4Transition -> [(Int, Int, String)]
 transitionToEdge source (If expr stmts target) = 
-  [(source, target, "if " ++ show expr ++ 
+  [(source, target, "if " ++ expressionToP4 expr ++ 
     (if not (null stmts) then "\n" ++ (pp_stmts stmts) else ""))]
 transitionToEdge source (Goto target) = 
   [(source, target, "goto")]

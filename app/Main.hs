@@ -159,10 +159,12 @@ main = do
         print ""
         let dotgraph = (transducerToGraph (grammar_to_transducer $ ddg))
         _ <- runGraphvizCommand Dot dotgraph Png ( "debug_original_transducer"++ ".png")
+        _ <- runGraphvizCommand Dot dotgraph Pdf ( "debug_original_transducer"++ ".pdf")
         let dotOutput = printDotGraph dotgraph
         writeFile ("debug_original_transducer" ++ ".dot") (TL.unpack dotOutput)
         let dotgraph = (transducerToGraph transducer)
         _ <- runGraphvizCommand Dot dotgraph Png ( "debug_opt_transducer"++ ".png")
+        _ <- runGraphvizCommand Dot dotgraph Pdf ( "debug_opt_transducer"++ ".pdf")
         let dotOutput = printDotGraph dotgraph
         writeFile ("debug_opt_transducer" ++ ".dot") (TL.unpack dotOutput)
 
@@ -175,9 +177,9 @@ main = do
       case backend settings of
         "continuations" -> do
           let p4t = mkP4Transducer ddg transducer
-          when (debug settings) $ do
-            -- putStrLn "Original abstract P4"
-            -- print p4t
+          when (debug settings) $ do 
+            putStrLn "Original abstract P4"
+            print p4t
             let dotgraph2 = P4Dot.p4TransducerToGraph p4t
             _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
 
@@ -186,21 +188,33 @@ main = do
             putStrLn $ p4code
             print "done"
 
-{-             let (Nonterminal _ _ r) = head ddg
+            -- let (Nonterminal _ _ r) = head ddg
 
-            print$ findLongestCommonPrefix (r)
-            print$ leftFactor (r) -}
+            -- print$ findLongestCommonPrefix (r)
+            -- print$ leftFactorRule (r) 
 
           print "done"
         "continuations-old" -> do
           let (p4t, c) = C.transducer_to_p4 ddg $ format transducer
-          let o = C.optimize p4t []
-          
+          let o = p4t
+          -- let o = C.optimize p4t []
+          -- when (debug settings) $ do
+          --   print $ "original p4t"
+          --   putStrLn $ show p4t
+          --   print $ "optimized p4t"
+          --   putStrLn $ show o
           let dotgraph2 = P4DotOld.p4TransducerToGraph o
           _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
+          _ <- runGraphvizCommand Dot dotgraph2 Pdf ("debug_p4transducer" ++ ".pdf")
+          let dotOutput = printDotGraph dotgraph2
+          writeFile ("debug_p4transducer" ++ ".dot") (TL.unpack dotOutput)
 
           let code = C.to_p4 ddg c o
           putStrLn code
+
+          let callees = C.findAllCallees ddg
+          print callees
+          print $ C.hasNonterminalsWithMultipleCallees ddg
 
         x -> do
           putStrLn $ "Unknown backend: " ++ x

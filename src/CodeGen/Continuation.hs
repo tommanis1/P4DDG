@@ -12,6 +12,7 @@ import qualified Data.Map as M
 import Data.List (intercalate)
 import P4Types
 import DDG.P4DDG (E(..))
+import qualified Data.Set as Set
 -- data v = P4Transducer
 
 -- data Action = 
@@ -357,7 +358,8 @@ convert' g i =
 -- convert (((s1, (Call f x, s2):out):transducer), ((s1', stmts, trans):xs), cs)  = 
 --     -- assert s1 == s1'
 --     (((s, out):transducer), ((s1', stmts ++ [Params f x], trans ++ [Goto s2]):xs) )
-
+-- For states with a single outgoing goto transition
+-- we inline the state into the target state 
 optimize :: P4Transducer -> P4Transducer -> P4Transducer
 optimize [] xs = xs
 optimize (x@(s1, stmts, [Goto s2]):xs) constructed =
@@ -424,12 +426,32 @@ format transducer =
         to_state :: LNode () -> State
         to_state (node_id, _) = node_id -}
 
+hasNonterminalsWithMultipleCallees :: Grammar -> Bool
+hasNonterminalsWithMultipleCallees g = 
+    let nonterminals = [n | (Nonterminal n _ _) <- g] in
+    let callees = findAllCallees g in
+    let callees_count = map (\n -> length $ filter (== n) callees) nonterminals in
+    any (> 1) callees_count
+
+findAllCallees :: Grammar -> [NonTerminalId]
+findAllCallees grammar = Set.toList $ Set.unions [calleesInRule rule | Nonterminal _ _ rule <- grammar]
+  where
+    calleesInRule ::  Rule (DDG.P4DDG.E P4Types.Expression) -> Set.Set NonTerminalId
+    calleesInRule (KleineClosure r) = calleesInRule r
+    calleesInRule (Alternation r1 r2) = Set.union (calleesInRule r1) (calleesInRule r2)
+    calleesInRule (Sequence r1 r2) = Set.union (calleesInRule r1) (calleesInRule r2)
+    calleesInRule (Label l) = calleesInLabel l
+
+    calleesInLabel :: Label e -> Set.Set NonTerminalId
+    calleesInLabel (NonTerminalCall ntId _) = Set.singleton ntId
+    calleesInLabel _ = Set.empty
+    
 to_p4 :: Grammar -> Continuations -> P4Transducer -> String
 to_p4 g c t =
     let
         stack_size = 16
         n_continuations = length c + 1
-        globDecls = "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n"
+        globDecls = if hasNonterminalsWithMultipleCallees g then "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n" else ""
         parserDecls = 
             "return_stack_type["++ show stack_size++"] return_stack;\n" ++
             "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n" ++
