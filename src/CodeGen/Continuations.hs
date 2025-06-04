@@ -6,8 +6,10 @@ import qualified Transducer.Def as T
 import P4Types
 import Data.Graph.Inductive hiding(Node, Edge, Graph)
 import qualified DDG.P4DDG hiding (Stmt)
-import DDG.Types (Grammar, Label(..), Rule(..), Param(..), Nonterminal(..))
+import DDG.Types (Grammar, Label(..), Rule(..), Param(..), Nonterminal(..), NonTerminalId)
 import Data.List (intercalate, find, partition)
+import qualified Data.Map as M
+import qualified Data.Set as Set
 
 type P4Transducer =
     T.Transducer
@@ -23,6 +25,29 @@ data Stmt stmt =
     | Extract String
     | Bind String String
     | HostLanguageStmts [stmt] deriving (Show)
+
+-- | LLM generated; Build a map from nonterminal names to unique identifiers for those with multiple callees
+buildContinuationMap :: Grammar -> M.Map String Integer
+buildContinuationMap g = 
+    let nonterminals = [n | (Nonterminal n _ _) <- g]
+        callees = findAllCallees g
+        calleeCounts = [(n, length $ filter (== n) callees) | n <- nonterminals]
+        multipleCallees = [n | (n, count) <- calleeCounts, count > 1]
+    in M.fromList $ zip multipleCallees [1..]
+
+-- | Find all callees in the grammar
+findAllCallees :: Grammar -> [NonTerminalId]
+findAllCallees grammar = concatMap calleesInRule [rule | Nonterminal _ _ rule <- grammar]
+  where
+    calleesInRule :: Rule (DDG.P4DDG.E P4Types.Expression) -> [NonTerminalId]
+    calleesInRule (KleineClosure r) = calleesInRule r
+    calleesInRule (Alternation r1 r2) = calleesInRule r1 ++ calleesInRule r2
+    calleesInRule (Sequence r1 r2) = calleesInRule r1 ++ calleesInRule r2
+    calleesInRule (Label l) = calleesInLabel l
+
+    calleesInLabel :: Label e -> [NonTerminalId]
+    calleesInLabel (NonTerminalCall ntId _) = [ntId]
+    calleesInLabel _ = []
 
 mkP4Transducer :: Grammar->T.P4Transducer -> P4Transducer
 mkP4Transducer g t =
@@ -51,15 +76,18 @@ convert grammar tranducer_state =
             in mkGraph' nodes edges
         (stateId, [(T.Labeled (NonTerminalCall fname1 e1), s2), (T.Return fname2 e2, s3)]) ->
             if fname1 == fname2 && e1 == e2 then
-                let
-                    continuation = 111
+                let 
                     ps :: [String] = map (\(Param _ id) -> id) $ params grammar fname1
                     es :: [String] = wordsWhen (== ',') e1
-                    body = map (\(a, b) -> Bind a b) (zip ps es) ++ [Push continuation]
-
-                    nodes = [(stateId, body)]
+                    assign_params =  map (\(a, b) -> Bind a b) (zip ps es)
+                    push_continuation = case M.lookup fname1 (buildContinuationMap grammar) of
+                        Just c ->  [Push c]
+                        Nothing -> []-- When a nonterminal is not in the map, we assume that it has only one callee and thus there is no need for a continuation
+                    nodes = [(stateId, assign_params ++ push_continuation)]
                     edges = [(stateId, s2, Otherwise)]
-                in mkGraph' nodes edges
+                in
+                    mkGraph' nodes edges
+            
             else
                 error "Function names or args do not match"
        {-  (stateId, [(T.Output _, s2)]) ->
@@ -124,8 +152,8 @@ plus t1 t2 =
     in
         t1{T.graph=mkGraph nodes edges}
 
-mkP4 :: P4Transducer -> String
-mkP4 t =
+mkP4 :: Grammar -> P4Transducer -> String
+mkP4 grammar t =
     let
         start = T.start t
         ids = map fst $ labNodes (T.graph t)
@@ -138,6 +166,7 @@ mkP4 t =
             ++ "    " ++ "out headers hdr,\n"
             ++ "    " ++ "inout metadata meta,\n"
             ++ "    " ++ "inout standard_metadata_t standard_metadata) {\n"
+        handle_continuations = if M.null (buildContinuationMap grammar) then "" else genReturnState (buildContinuationMap grammar)
     in
         parserDecl ++ "\n" ++
         "// Place this header definition outside of your parser\n" ++
@@ -156,6 +185,7 @@ mkP4 t =
         "}\n" ++
         concatMap (\i -> mkState i t) ids
         ++ "}\n"
+        ++ handle_continuations
 
 
 
@@ -178,7 +208,7 @@ mkOutgoingTransitions out  =
     let
         (ifs, otherwises) = partition (\case (_, _, Otherwise) -> False; _ -> True) out
         otherwise :: Maybe Int = findOtherwise otherwises
-    in
+    in  
         if all_same_type ifs then
             error "mkState: ifs have different types: not yet implemented"
             -- let left_side_of_expression = "" in
@@ -245,3 +275,18 @@ appendToLines prefix str =
         prefixedLines = map (prefix ++) lines'
     in
         unlines prefixedLines
+
+genReturnState :: M.Map String Integer -> String
+genReturnState c = let 
+    size = show (compute_bit_width_8 (length c+1)) in 
+    "state state_continue {\n" ++
+    "    bit<"++ size ++"> tmp_return;\n" ++
+    "    if (return_stack_index == 0) { tmp_return = 0;} else {\n" ++
+    "        tmp_return = return_stack[return_stack_index].val;\n" ++
+    "        return_stack_index = return_stack_index - 1;\n" ++
+    "    }\n" ++
+    "    transition select (tmp_return) {\n" ++
+    concatMap (\(k, v) -> "           " ++ show v ++ " : state_" ++ show k ++ ";\n") (M.toList c) ++
+    "           0 : accept;\n" ++
+    "    }\n" ++
+    "}\n"
