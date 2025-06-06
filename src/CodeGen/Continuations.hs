@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables, OverloadedStrings #-}
+{-# LANGUAGE ScopedTypeVariables, OverloadedStrings, DisambiguateRecordFields #-}
 {-# LANGUAGE LambdaCase #-}
 module CodeGen.Continuations where
 
@@ -10,6 +10,9 @@ import DDG.Types (Grammar, Label(..), Rule(..), Param(..), Nonterminal(..), NonT
 import Data.List (intercalate, find, partition)
 import qualified Data.Map as M
 import qualified Data.Set as Set
+import qualified DDG.P4DDG
+import Prelude hiding (id)
+import Control.Monad.State
 
 type P4Transducer =
     T.Transducer
@@ -21,19 +24,19 @@ data Transition e =
 
 data Stmt stmt =
     Push Integer
-    | Pop Integer
+    -- | Pop Integer
     | Extract String
     | Bind String String
     | HostLanguageStmts [stmt] deriving (Show)
 
 -- | LLM generated; Build a map from nonterminal names to unique identifiers for those with multiple callees
-buildContinuationMap :: Grammar -> M.Map String Integer
-buildContinuationMap g = 
-    let nonterminals = [n | (Nonterminal n _ _) <- g]
-        callees = findAllCallees g
-        calleeCounts = [(n, length $ filter (== n) callees) | n <- nonterminals]
-        multipleCallees = [n | (n, count) <- calleeCounts, count > 1]
-    in M.fromList $ zip multipleCallees [1..]
+-- buildContinuationMap :: Grammar -> M.Map String Integer
+-- buildContinuationMap g = 
+--     let nonterminals = [n | (Nonterminal n _ _) <- g]
+--         callees = findAllCallees g
+--         calleeCounts = [(n, length $ filter (== n) callees) | n <- nonterminals]
+--         multipleCallees = [n | (n, count) <- calleeCounts, count > 1]
+--     in M.fromList $ zip multipleCallees [1..]
 
 -- | Find all callees in the grammar
 findAllCallees :: Grammar -> [NonTerminalId]
@@ -49,20 +52,36 @@ findAllCallees grammar = concatMap calleesInRule [rule | Nonterminal _ _ rule <-
     calleesInLabel (NonTerminalCall ntId _) = [ntId]
     calleesInLabel _ = []
 
-mkP4Transducer :: Grammar->T.P4Transducer -> P4Transducer
+functionsWithMoreThanOneCallee :: Grammar -> [String]
+functionsWithMoreThanOneCallee grammar = 
+    let allCallees = findAllCallees grammar
+        calleeCounts = M.fromListWith (+) [(callee, 1) | callee <- allCallees]
+        multipleCallees = [callee | (callee, count) <- M.toList calleeCounts, count > 1]
+    in multipleCallees
+
+mkP4Transducer :: Grammar->T.P4Transducer -> (P4Transducer, M.Map String [Continuation])
 mkP4Transducer g t =
     let
         formatted = T.format t
-        new_graph = T.graph $ foldl plus
-            T.Transducer{T.start=0, T.graph=mkGraph [] []}
-            (map (convert g) formatted)
+        initialState = M.empty
+        computation :: ContinuationState P4Transducer = do
+            convertedParts <- mapM (convert g ) formatted
+            let combinedTransducer = foldl plus 
+                    T.Transducer{T.start=0, T.graph=mkGraph [] []}
+                    convertedParts
+            return T.Transducer{T.start = T.start t, T.graph = T.graph combinedTransducer}
+        (result, finalState) = runState computation initialState
     in
-        T.Transducer{T.start = T.start t, T.graph = new_graph}
+        (result, finalState)
 
-mkGraph' nodes edges = T.Transducer{T.start = 0, T.graph = mkGraph nodes edges}
+mkGraph' :: [LNode [Stmt P4Types.Statement]] -> [LEdge (Transition (DDG.P4DDG.E P4Types.Expression))] -> ContinuationState P4Transducer
+mkGraph' nodes edges = return $ T.Transducer{T.start = 0, T.graph = mkGraph nodes edges}
 
-convert :: Grammar -> (Int, [(T.Transition (DDG.P4DDG.E P4Types.Expression), Int)]) -> P4Transducer
+type ContinuationState = State (M.Map String [Continuation])
+convert :: Grammar -> (Int, [(T.Transition (DDG.P4DDG.E P4Types.Expression), Int)]) -> ContinuationState P4Transducer
 convert grammar tranducer_state =
+    let listOfFunctionsWithMoreThanOneCallee = functionsWithMoreThanOneCallee  grammar
+    in
     case tranducer_state of
         (stateId, [(T.Labeled (Terminal t), s2)]) ->
             let
@@ -76,18 +95,34 @@ convert grammar tranducer_state =
             in mkGraph' nodes edges
         (stateId, [(T.Labeled (NonTerminalCall fname1 e1), s2), (T.Return fname2 e2, s3)]) ->
             if fname1 == fname2 && e1 == e2 then
-                let 
+                let
                     ps :: [String] = map (\(Param _ id) -> id) $ params grammar fname1
                     es :: [String] = wordsWhen (== ',') e1
-                    assign_params =  map (\(a, b) -> Bind a b) (zip ps es)
-                    push_continuation = case M.lookup fname1 (buildContinuationMap grammar) of
-                        Just c ->  [Push c]
-                        Nothing -> []-- When a nonterminal is not in the map, we assume that it has only one callee and thus there is no need for a continuation
-                    nodes = [(stateId, assign_params ++ push_continuation)]
-                    edges = [(stateId, s2, Otherwise)]
-                in
-                    mkGraph' nodes edges
-            
+                    assign_params =  map (\(a, b) -> Bind a b) (zip ps es) in
+                    if fname1 `elem` listOfFunctionsWithMoreThanOneCallee then do
+                        continuationsMap :: (M.Map String [Continuation]) <- get
+                        let allContinuations = concat (M.elems continuationsMap)
+                        let continuation = if null allContinuations then 1 else maximum (map (\c -> CodeGen.Continuations.id c) allContinuations) + 1
+                        let existingContinuations = M.findWithDefault [] fname1 continuationsMap
+                        let updatedMap = M.insert fname1 (existingContinuations ++ [Continuation {id = continuation, stateid = fromIntegral s3}]) continuationsMap
+                        put updatedMap
+                        let nodes = [(stateId, assign_params ++ [Push continuation])]
+                        let edges = [(stateId, s2, Otherwise)]
+                        mkGraph' nodes edges
+                    else let 
+                        nodes = [(stateId, assign_params )]
+                        edges = [(stateId, s2, Otherwise)]
+                        in mkGraph' nodes edges
+                -- in
+                --     do 
+                --         currentMap <- get
+                --         let updatedMap = case M.lookup fname1 currentMap of
+                --                 Just cont -> M.insert fname1 (cont { stateid = fromIntegral s3 }) currentMap
+                --                 Nothing -> currentMap
+                --         put updatedMap
+
+                --         mkGraph' nodes edges
+
             else
                 error "Function names or args do not match"
        {-  (stateId, [(T.Output _, s2)]) ->
@@ -101,7 +136,7 @@ convert grammar tranducer_state =
                 elses = [o | o@(T.Labeled(Epsilon), _) <-outgoing ]
                 rest = filter (\x -> x `notElem` ifs && x `notElem` elses) outgoing
             in
-                if null rest && length elses < 2 then
+                if True then --null rest && length elses < 2 then
                     let
                         nodes = [(stateId, [])]
                         edges =
@@ -152,41 +187,39 @@ plus t1 t2 =
     in
         t1{T.graph=mkGraph nodes edges}
 
-mkP4 :: Grammar -> P4Transducer -> String
-mkP4 grammar t =
+mkP4 :: Grammar -> P4Transducer -> M.Map String [Continuation] -> String
+mkP4 grammar t continuationMap =
     let
         start = T.start t
         ids = map fst $ labNodes (T.graph t)
         stack_size = 16
         n_continuations = 12
-        contains_param_calls = False
-        name = "TMP"
-        parserDecl = 
+        contains_param_calls = not $ null $ functionsWithMoreThanOneCallee grammar
+        (Nonterminal name _ _) = head grammar
+        parserDecl =
             "parser " ++ name ++ " (packet_in packet,\n"
             ++ "    " ++ "out headers hdr,\n"
-            ++ "    " ++ "inout metadata meta,\n"
+            ++ "    " ++ "inout metadata_t meta,\n"
             ++ "    " ++ "inout standard_metadata_t standard_metadata) {\n"
-        handle_continuations = if M.null (buildContinuationMap grammar) then "" else genReturnState (buildContinuationMap grammar)
+        handle_continuations = if contains_param_calls then genReturnState continuationMap else ""
     in
-        parserDecl ++ "\n" ++
+        (if contains_param_calls then
         "// Place this header definition outside of your parser\n" ++
-        if contains_param_calls then
         "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n"
-        else ""
-        ++ 
+        else "") ++ parserDecl ++ "\n" ++
         "// Make these global variables of the parser\n" ++
-        if contains_param_calls then
+        (if contains_param_calls then
         "return_stack_type["++ show stack_size++"] return_stack;\n" ++
-        "bit<"++ show( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n"
-        else
+        "bit<"++ show ( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n"
+        else "" )++
 
        "state start {\n" ++
         "    transition state_" ++ show start ++ ";\n" ++
         "}\n" ++
         concatMap (\i -> mkState i t) ids
-        ++ "}\n"
-        ++ handle_continuations
 
+        ++ handle_continuations
+        ++ "}\n"
 
 
 mkState :: Int -> P4Transducer -> String
@@ -208,7 +241,7 @@ mkOutgoingTransitions out  =
     let
         (ifs, otherwises) = partition (\case (_, _, Otherwise) -> False; _ -> True) out
         otherwise :: Maybe Int = findOtherwise otherwises
-    in  
+    in
         if all_same_type ifs then
             error "mkState: ifs have different types: not yet implemented"
             -- let left_side_of_expression = "" in
@@ -221,16 +254,41 @@ mkOutgoingTransitions out  =
             --     ++ "}\n"
 
         else
-            let bit_length = compute_bit_width_8 $ length ifs + 1 in
-                "bit<"++ show bit_length ++"> tmp = 0;\n"
-                ++ concatMap (gen_if . (\(_, s2, E e) -> (e,s2))) ifs
-                ++ "transition select(tmp) {\n" ++
-                    concatMap (\((_, s2, _), i) ->
-                        "    " ++ show i ++ " : state_" ++ show s2 ++ ";\n") (zip ifs [1..])
-                    ++ case otherwise of
-                        Just s2 -> "    0 : state_" ++ show s2 ++ ";\n"
+                       -- let bit_length = compute_bit_width_8 $ length ifs + 1 in
+            --     "bit<"++ show bit_length ++"> tmp = 0;\n"
+            --     ++ concatMap (gen_if . (\(_, s2, E e) -> (e,s2))) ifs
+            --     ++ "transition select(tmp) {\n" ++
+            --         concatMap (\((_, s2, _), i) ->
+            --             "    " ++ show i ++ " : state_" ++ show s2 ++ ";\n") (zip ifs [1..])
+            --         ++ case otherwise of
+            --             Just s2 -> "    0 : state_" ++ show s2 ++ ";\n"
+            --             Nothing -> ""
+            --     ++ "}\n"
+
+            -- error $ "mkState: ifs have different types: not yet implemented"
+
+
+            let (equality_expressions, set_memberships) = partition isEqualityExpression (map (\(a, b, E e) -> (a, b, e)) ifs)
+                isEqualityExpression (a, b, (DDG.P4DDG.In _ _)) = False
+                isEqualityExpression _ = True
+            in
+                if null out then "transition accept;\n" else
+                if null set_memberships then
+                    "transition select (" ++ intercalate "," (map (\(_, _,  e) -> innerExpressionToP4 e) equality_expressions) ++ ") {\n" ++
+                    concatMap (\((_, s2, e), i) ->
+                        case e of
+                            DDG.P4DDG.E _ ->
+                                "    " ++ buildBoolListWithTrueAt False i (equality_expressions) ++ " : state_" ++ show s2 ++ ";\n"
+                            DDG.P4DDG.Not (DDG.P4DDG.E _) ->
+                                "    " ++ buildBoolListWithTrueAt True i (equality_expressions) ++ " : state_" ++ show s2 ++ ";\n"
+                            _ -> error $ "mkState: unexpected expression: " ++ show e ++ show equality_expressions
+                    ) (zip equality_expressions [0..])
+                        ++ case otherwise of
+                        Just s2 -> "    default : state_" ++ show s2 ++ ";\n"
                         Nothing -> ""
-                ++ "}\n"
+                    ++ "}\n"
+                else
+                    error $ "mkState: set-membership expressions not yet implemented: " ++ show set_memberships
 
             -- error $ "mkState: ifs have different types: not yet implemented"
 
@@ -268,6 +326,10 @@ expressionToP4 :: (DDG.P4DDG.E P4Types.Expression) -> String
 expressionToP4 (DDG.P4DDG.E e) = ppP4E e
 expressionToP4 (DDG.P4DDG.Not e) = "!" ++ expressionToP4 e
 
+innerExpressionToP4 :: (DDG.P4DDG.E P4Types.Expression) -> String
+innerExpressionToP4 (DDG.P4DDG.E e) = ppP4E e
+innerExpressionToP4 (DDG.P4DDG.Not e) = innerExpressionToP4 e
+
 appendToLines :: String -> String -> String
 appendToLines prefix str =
     let
@@ -276,9 +338,12 @@ appendToLines prefix str =
     in
         unlines prefixedLines
 
-genReturnState :: M.Map String Integer -> String
-genReturnState c = let 
-    size = show (compute_bit_width_8 (length c+1)) in 
+data Continuation = Continuation {id :: Integer, stateid :: Integer} deriving (Show)
+
+genReturnState :: M.Map String [Continuation] -> String
+genReturnState c = let
+    allContinuations = concat (M.elems c)
+    size = show (compute_bit_width_8 (length allContinuations+1)) in
     "state state_continue {\n" ++
     "    bit<"++ size ++"> tmp_return;\n" ++
     "    if (return_stack_index == 0) { tmp_return = 0;} else {\n" ++
@@ -286,7 +351,16 @@ genReturnState c = let
     "        return_stack_index = return_stack_index - 1;\n" ++
     "    }\n" ++
     "    transition select (tmp_return) {\n" ++
-    concatMap (\(k, v) -> "           " ++ show v ++ " : state_" ++ show k ++ ";\n") (M.toList c) ++
-    "           0 : accept;\n" ++
+    concatMap (\v -> "           " ++ show (CodeGen.Continuations.id v) ++ " : state_" ++  show (stateid v) ++ ";\n") allContinuations
+    ++ "           0 : accept;\n" ++
     "    }\n" ++
     "}\n"
+
+buildBoolListWithTrueAt :: Bool -> Int -> [(Int, Int, DDG.P4DDG.E P4Types.Expression)] -> String
+buildBoolListWithTrueAt is_Not i l =
+    let boolList = [if j == i then true else (false e) | (e, j) <- zip l [0..(length l)-1]]
+    in "(" ++ intercalate ", " boolList ++ ")"
+    where
+        true =  if is_Not then "false" else "true"
+        false (_, _, DDG.P4DDG.Not e) = "true"
+        false (_, _, _) = "false"

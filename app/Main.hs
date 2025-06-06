@@ -9,7 +9,7 @@ module Main where
 
 import DDG.Types
 import TransducerToDot
-import CodeGen.Continuations
+import CodeGen.Continuations hiding (id)
 import qualified CodeGen.Continuation as C
 import qualified P4TransducerToDot as P4Dot
 import qualified P4TransducerToDotOld as P4DotOld
@@ -168,6 +168,8 @@ main = do
         let dotOutput = printDotGraph dotgraph
         writeFile ("debug_opt_transducer" ++ ".dot") (TL.unpack dotOutput)
 
+
+
       -- print $ "nonterm calls"
       -- print $ countNonterminalCalls ddg
       -- print $ ""
@@ -176,28 +178,34 @@ main = do
 
       case backend settings of
         "continuations" -> do
-          let p4t = mkP4Transducer ddg transducer
+          let (p4t, c) = mkP4Transducer ddg transducer
           when (debug settings) $ do 
             putStrLn "Original abstract P4"
             print p4t
             let dotgraph2 = P4Dot.p4TransducerToGraph p4t
             _ <- runGraphvizCommand Dot dotgraph2 Png ("debug_p4transducer" ++ ".png")
+            print ""
 
-            let p4code =  mkP4 p4t
+          let p4code =  mkP4 ddg p4t c
+          when (debug settings) $ do 
             putStrLn "P4 code"
-            putStrLn $ p4code
-            print "done"
+          putStrLn $ p4code
+          -- print $ c
+
+            -- print "done"
+
+            -- print $ buildContinuationMap ddg
 
             -- let (Nonterminal _ _ r) = head ddg
 
             -- print$ findLongestCommonPrefix (r)
             -- print$ leftFactorRule (r) 
 
-          print "done"
+          -- print "done"
         "continuations-old" -> do
           let (p4t, c) = C.transducer_to_p4 ddg $ format transducer
           let o = p4t
-          -- let o = C.optimize p4t []
+          let o = C.optimize p4t []
           -- when (debug settings) $ do
           --   print $ "original p4t"
           --   putStrLn $ show p4t
@@ -212,9 +220,9 @@ main = do
           let code = C.to_p4 ddg c o
           putStrLn code
 
-          let callees = C.findAllCallees ddg
-          print callees
-          print $ C.hasNonterminalsWithMultipleCallees ddg
+          -- let callees = findAllCallees ddg
+          -- print callees
+          -- print $ hasNonterminalsWithMultipleCallees ddg
 
         x -> do
           putStrLn $ "Unknown backend: " ++ x

@@ -548,13 +548,19 @@ gen_tran (Accept) = "    transition state_continue;\n"
 
 gen_ifs :: Maybe String -> [(((DDG.P4DDG.E P4Types.Expression), [Stmt], State), Int)] -> String
 gen_ifs def ifs =
+    let l = length ifs in
     let bit_length =compute_bit_width_8 $ length ifs + 1 in
     "    " ++ "bit<"++ show bit_length ++"> tmp = 0;\n" ++
-    concatMap gen_if ifs ++
-    "    transition select(tmp) {\n" ++
-    (concatMap (\((_, _, s), c) -> "       " ++ show c ++ " : " ++ "state_" ++ show s ++ ";\n") ifs) ++
-    ((\case Nothing -> "" ; Just s -> "       0 :" ++ s ++ ";\n") def) ++
+    -- concatMap gen_if ifs ++
+    "    transition select("++ (intercalate ", " $ map (\((e, _, _), c)->expressionToP4 e)  ifs ) ++") {\n" ++
+    (concatMap (\((_, _, s), c) -> "       " ++  buildBoolListWithTrueAt c l ++ " : " ++ "state_" ++ show s ++ ";\n") ifs) ++
+    ((\case Nothing -> "" ; Just s -> "       default :" ++ s ++ ";\n") def) ++
      "}\n"
+
+buildBoolListWithTrueAt :: Int -> Int -> String
+buildBoolListWithTrueAt i l = 
+    let boolList = [if j == i then "true" else "false" | j <- [0..l-1]]
+    in "(" ++ intercalate ", " boolList ++ ")"
 
 gen_if :: (((DDG.P4DDG.E P4Types.Expression), [Stmt], State), Int) -> String
 gen_if ((e, stmts, _), c) =
