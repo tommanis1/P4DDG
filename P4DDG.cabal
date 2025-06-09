@@ -29,7 +29,7 @@ library
         Transducer.Def
         Transducer.GrammarToTransducer
         CodeGen.Continuations
-        CodeGen.Continuation
+        -- CodeGen.Continuation
         -- CodeGen.AName
         -- CodeGen.Continuation
     -- other-modules:
@@ -67,4 +67,22 @@ executable P4DDG
         , P4DDG
 
     hs-source-dirs:   app, tests, src
+    default-language: Haskell2010
+
+executable P4DDGBrowser
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+
+    -- other-extensions:
+    build-depends:
+        base >= 4.17 && < 4.22
+        , fgl
+        , containers
+        , text
+        , P4DDG
+        , megaparsec
+        , mtl
+
+    hs-source-dirs:   src, appBrowser
     default-language: Haskell2010
