@@ -31,7 +31,7 @@ import qualified Data.Text as T
 import qualified Text.Megaparsec.Char.Lexer as L
 import Control.Monad
 import Transducer.Def(format)
-import DDG.LeftFactor
+-- import DDG.LeftFactor
 -- import qualified CodeGen.Continuation as C
 
 data Settings = Settings {
