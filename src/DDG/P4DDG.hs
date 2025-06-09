@@ -14,24 +14,3 @@ pp :: E P4Types.Expression -> String
 pp (E e) = ppP4E e
 pp (Not e) = "!" ++ DDG.P4DDG.pp e
 -- pp (In e1 e2) = ppP4E e1 ++ " in " ++ ppP4E e2
-
-{- 
-Desugared in the parser
-data Show e => Rule e = 
-    KleineClosure (Rule e)
-    | Alternation (Rule e) (Rule e)
-    | Sequence (Rule e) (Rule e)
-    | If e (Rule e) (Maybe (Rule e))
-    | Case e [(e, (Rule e))]
-    | Label (Label e)
-    deriving (Show, Eq, Ord)
-
-
-data Label e =
-    Epsilon
-    | Empty
-    | Terminal String
-    | NonTerminalCall String String
-    | Statements [String]
-    | Constraint e
-    deriving (Show, Eq, Ord) -}
