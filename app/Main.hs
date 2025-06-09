@@ -10,10 +10,7 @@ module Main where
 import DDG.Types
 import TransducerToDot
 import CodeGen.Continuations hiding (id)
-import qualified CodeGen.Continuation as C
 import qualified P4TransducerToDot as P4Dot
-import qualified P4TransducerToDotOld as P4DotOld
--- import qualified CodeGen.AName as AName
 import Transducer.GrammarToTransducer
 import Data.GraphViz.Commands
 import Data.Graph.Inductive

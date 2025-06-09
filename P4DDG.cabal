@@ -21,17 +21,10 @@ library
         DDG.Types
         DDG.P4DDG
         Parser
-        -- DDG.Grammar
-
-
         P4Types
-
         Transducer.Def
         Transducer.GrammarToTransducer
         CodeGen.Continuations
-        CodeGen.Continuation
-        -- CodeGen.AName
-        -- CodeGen.Continuation
     -- other-modules:
     -- other-extensions:
     build-depends:    
@@ -50,11 +43,7 @@ executable P4DDG
     other-modules:
         TransducerToDot
         P4TransducerToDot
-        P4TransducerToDotOld
-        -- CodeGen.Continuation
-        -- PaperExampleGrammars
-        -- P4TransducerToDot
-    -- other-extensions:
+
     build-depends:
         base >= 4.17 && < 4.22
         , graphviz
