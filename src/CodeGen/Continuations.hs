@@ -24,19 +24,9 @@ data Transition e =
 
 data Stmt stmt =
     Push Integer
-    -- | Pop Integer
     | Extract String
     | Bind String String
     | HostLanguageStmts [stmt] deriving (Show)
-
--- | LLM generated; Build a map from nonterminal names to unique identifiers for those with multiple callees
--- buildContinuationMap :: Grammar -> M.Map String Integer
--- buildContinuationMap g = 
---     let nonterminals = [n | (Nonterminal n _ _) <- g]
---         callees = findAllCallees g
---         calleeCounts = [(n, length $ filter (== n) callees) | n <- nonterminals]
---         multipleCallees = [n | (n, count) <- calleeCounts, count > 1]
---     in M.fromList $ zip multipleCallees [1..]
 
 -- | Find all callees in the grammar
 findAllCallees :: Grammar -> [NonTerminalId]
@@ -156,21 +146,6 @@ findNonTerminal g i =
     case filter (\(Nonterminal n _ _) -> n == i) g of
         [] -> Nothing
         (x:_) -> Just x
--- genOutgoingEdges = 
---     let
---         ifs = 
---         otherwises = 
---     in 
-
--- genIf :: Transition -> String
--- genIf tmpvar (If e state) = 
---     let 
---         val 
---     "if ( " ++ prt e ++ ") {\n" ++
---         tmpvar ++ " = " ++ val ++ ";\n"
---     ++ "}\n"
-
--- mkP4Transducer :: Transducer -> P4Transducer
 
 wordsWhen     :: (Char -> Bool) -> String -> [String]
 wordsWhen p s =  case dropWhile p s of
@@ -202,12 +177,14 @@ mkP4 grammar t continuationMap =
             ++ "    " ++ "inout metadata_t meta,\n"
             ++ "    " ++ "inout standard_metadata_t standard_metadata) {\n"
         handle_continuations = if contains_param_calls then genReturnState continuationMap else ""
+        param_decls = gen_decls_for_parameterized_nonterminal grammar
     in
         (if contains_param_calls then
         "// Place this header definition outside of your parser\n" ++
         "header return_stack_type { bit<"++ show (compute_bit_width_8 n_continuations) ++ "> val;}\n"
         else "") ++ parserDecl ++ "\n" ++
         "// Make these global variables of the parser\n" ++
+        param_decls ++
         (if contains_param_calls then
         "return_stack_type["++ show stack_size++"] return_stack;\n" ++
         "bit<"++ show ( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n"
@@ -244,30 +221,9 @@ mkOutgoingTransitions out  =
     in
         if all_same_type ifs then
             error "mkState: ifs have different types: not yet implemented"
-            -- let left_side_of_expression = "" in
-            --     "select (" ++ left_side_of_expression ++ ") {\n" ++
-            --         concatMap (\((_, s2, _), right_side) ->
-            --             "    " ++ right_side ++ " : state_" ++ show s2 ++ ";\n") ifs
-            --         ++ case otherwise of
-            --             Just s2 -> "    default : state_" ++ show s2 ++ ";\n"
-            --             Nothing -> ""
-            --     ++ "}\n"
+
 
         else
-                       -- let bit_length = compute_bit_width_8 $ length ifs + 1 in
-            --     "bit<"++ show bit_length ++"> tmp = 0;\n"
-            --     ++ concatMap (gen_if . (\(_, s2, E e) -> (e,s2))) ifs
-            --     ++ "transition select(tmp) {\n" ++
-            --         concatMap (\((_, s2, _), i) ->
-            --             "    " ++ show i ++ " : state_" ++ show s2 ++ ";\n") (zip ifs [1..])
-            --         ++ case otherwise of
-            --             Just s2 -> "    0 : state_" ++ show s2 ++ ";\n"
-            --             Nothing -> ""
-            --     ++ "}\n"
-
-            -- error $ "mkState: ifs have different types: not yet implemented"
-
-
             let (equality_expressions, set_memberships) = partition isEqualityExpression (map (\(a, b, E e) -> (a, b, e)) ifs)
                 isEqualityExpression (a, b, (DDG.P4DDG.In _ _)) = False
                 isEqualityExpression _ = True
@@ -290,7 +246,6 @@ mkOutgoingTransitions out  =
                 else
                     error $ "mkState: set-membership expressions not yet implemented: " ++ show set_memberships
 
-            -- error $ "mkState: ifs have different types: not yet implemented"
 
 
 
@@ -364,3 +319,17 @@ buildBoolListWithTrueAt is_Not i l =
         true =  if is_Not then "false" else "true"
         false (_, _, DDG.P4DDG.Not e) = "true"
         false (_, _, _) = "false"
+
+gen_decls_for_parameterized_nonterminal :: Grammar -> String
+gen_decls_for_parameterized_nonterminal g = 
+    let 
+        params = find_params g []
+        i = "    "
+    in 
+       (intercalate "\n" $ map (\(Param t id) -> i ++ t ++ " " ++ id ++ ";") params) ++ "\n"
+
+    where 
+        find_params :: Grammar -> [Param] -> [Param]
+        -- find_params _ _ = []
+        find_params [] p = p
+        find_params ((Nonterminal _ params _):xs) p = find_params xs (p ++ params)
