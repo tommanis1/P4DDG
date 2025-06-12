@@ -51,9 +51,27 @@ executable P4DDG
         , containers
         , text
         , P4DDG
-        , megaparsec
+        , megaparsec < 9.7
         , mtl
         , P4DDG
 
     hs-source-dirs:   app, tests, src
+    default-language: Haskell2010
+
+executable Playground
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+
+
+    build-depends:
+        base >= 4.17 && < 4.22
+        , fgl
+        , containers
+        , text
+        , mtl
+        , P4DDG
+        , megaparsec
+
+    hs-source-dirs:   appWeb, tests, src
     default-language: Haskell2010
