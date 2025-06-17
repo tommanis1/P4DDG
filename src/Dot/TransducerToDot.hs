@@ -1,4 +1,4 @@
-module TransducerToDot where
+module Dot.TransducerToDot where
 
 import Transducer.GrammarToTransducer
 import DDG.Types hiding (Label)

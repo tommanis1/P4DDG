@@ -1,4 +1,4 @@
-module P4TransducerToDot where
+module Dot.P4TransducerToDot where
 
 
 import Data.GraphViz
