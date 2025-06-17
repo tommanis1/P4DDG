@@ -8,8 +8,10 @@
         body {
             margin: 0;
             padding: 0;
+        }
+        .split-container {
             display: flex;
-            height: 100vh;
+            height: 85vh;
         }
         .left-panel {
             width: 50%;
@@ -23,7 +25,7 @@
         }
         #code-input {
             width: 100%;
-            height: calc(100vh - 100px);
+            height: calc(85vh - 100px);
             margin-bottom: 10px;
             font-family: monospace;
             padding: 10px;
@@ -42,7 +44,7 @@
         }
         #output {
             width: 100%;
-            height: calc(100vh - 40px);
+            height: calc(85vh - 40px);
             font-family: monospace;
             padding: 10px;
             box-sizing: border-box;
@@ -50,16 +52,36 @@
             border: 1px solid #ddd;
             resize: none;
         }
+        .visualization-container {
+            padding: 20px;
+            background: #ffffff;
+            border-top: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
-    <div class="left-panel">
-        <button id="compile-btn" onClick="document.getElementById('output').value = globalCompile(document.getElementById('code-input').value)">Compile</button>
-        <textarea id="code-input" placeholder="Enter your code here..."></textarea>
+    <div class="split-container">
+        <div class="left-panel">
+            <button id="compile-btn" onClick="handleCompile()">Compile</button>
+            <textarea id="code-input" placeholder="Enter your code here..."></textarea>
+        </div>
+        <div class="right-panel">
+            <textarea id="output" readonly placeholder="P4 code will appear here..."></textarea>
+        </div>
     </div>
-    <div class="right-panel">
-        <textarea id="output" readonly placeholder="Output will appear here..."></textarea>
+
+    <div class="visualization-container">
+        <h2>Transducer Visualization</h2>
+        <div id="graph"></div>
     </div>
 </body>
 <script language="javascript" src="gen/all.js" defer></script>
+<script src="main.js"></script>
+<script src="viz-standalone.js"></script>
+<script>
+    Viz.instance().then(function(viz) {
+        var svg = viz.renderSVGElement("digraph { a -> b }");
+        document.getElementById("graph").appendChild(svg);
+    });
+</script>
 </html>

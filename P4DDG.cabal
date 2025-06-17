@@ -69,7 +69,7 @@ executable P4DDG
     hs-source-dirs:   app, tests, src
     default-language: Haskell2010
 
-executable P4DDGBrowser
+executable Playground
     import:           warnings
     main-is:          Main.hs
     other-modules:
@@ -83,6 +83,7 @@ executable P4DDGBrowser
         , P4DDG
         , megaparsec
         , mtl
+        , graphviz
 
-    hs-source-dirs:   src, appBrowser
+    hs-source-dirs:   src, appWeb
     default-language: Haskell2010
