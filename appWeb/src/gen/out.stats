@@ -1,37 +1,50 @@
-number of modules: 847
-packed metadata:   5522643
+number of modules: 1176
+packed metadata:   12790529
 
 code size summary per package (in bytes):
 
 P4DDG-0.0.0.1-inplace:   0
-P4DDG-0.0.0.1-inplace-Playground:1021882
+P4DDG-0.0.0.1-inplace-Playground:1178165
 array-0.5.8.0-inplace:   0
-base:                    4006
+base:                    3780
+base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a:0
 binary-0.8.9.3-inplace:  0
 bytestring-0.12.2.0-inplace:0
 case-insensitive-1.2.1.0-f5403ee4b520abfd630975b0d056a6c4a071b44a87610ca966cc218e85490bcf:0
-containers-0.7-inplace:  101243
+colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f:0
+containers-0.7-inplace:  102708
 deepseq-1.5.0.0-inplace: 0
+directory-1.3.8.5-inplace:0
+dlist-1.0-266b061219f97f43391ed07dab8747f3312977b09908e0567a18781b8aaf0a1e:0
 exceptions-0.10.9-inplace:0
 fgl-5.8.3.0-d11baeb4c2539376845cb485d6bca63fc8257316252d90300850fd7f023a19ce:54028
 filepath-1.5.4.0-inplace:0
-ghc-bignum:              76218
+ghc-bignum:              121926
 ghc-boot-th-9.10.2-inplace:0
-ghc-internal:            604950
-ghc-prim:                46839
+ghc-internal:            843248
+ghc-prim:                49410
+graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510:2965478
 hashable-1.5.0.0-8006d6e633fde7fbaf5c9d3925ab9a9182ba96f4d3731234af15bd1ba3002479:0
 integer-logarithms-1.0.4-26c47a23877493c6733dcba48964aaaeff6748050d2bb7047c519a1d96d80f85:0
-megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1:217844
+megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416:235917
 mtl-2.3.1-inplace:       0
 os-string-2.0.4-inplace: 0
 parser-combinators-1.3.0-1f21daabe87ce66c62a77b5967cef500c225f64b83272cfb7e8434784871ac0e:0
+polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea:0
 pretty-1.1.3.6-inplace:  0
 primitive-0.9.1.0-7f9db8ff39435e09cd38c060b608ed41c55e129ddf72dc1a053101438c3085ad:0
+process-1.6.25.0-inplace:0
+random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef:0
 scientific-0.3.8.0-edd76d54551a247d49f432c04cfb03c644a9740568db313ed1148b13afd59afa:0
+splitmix-0.1.2-5117524ded8921f7ae55ee1492fc58e88e8a6e1fd61f178db9c9f4151519bfc1:0
 stm-2.5.3.1-inplace:     0
 template-haskell:        0
-text-2.1.2-inplace:      0
-transformers-0.6.1.1-inplace:0
+temporary-1.3-2f7b9dd83ac17857d17a4077e4666fb28163146acfa00f6f7178d04c4c68182d:0
+text-2.1.2-inplace:      112083
+time-1.12.2-inplace:     0
+transformers-0.6.1.1-inplace:1836
+unix-2.8.6.0-inplace:    0
+wl-pprint-text-1.2.0.2-37b2160d20d63dcc89e0199d592f2a17e95c1d5916c4b761c31b585dfb067c82:107548
 
 
 code size per module (in bytes):
@@ -47,9 +60,11 @@ code size per module (in bytes):
     $P4DDG-0.0.0.1-inplace-Playground$CodeGen.Continuations:138146
     $P4DDG-0.0.0.1-inplace-Playground$DDG.P4DDG:20651
     $P4DDG-0.0.0.1-inplace-Playground$DDG.Types:106052
-    $P4DDG-0.0.0.1-inplace-Playground$Main:6078
+    $P4DDG-0.0.0.1-inplace-Playground$Dot.P4TransducerToDot:32194
+    $P4DDG-0.0.0.1-inplace-Playground$Dot.TransducerToDot:41958
+    $P4DDG-0.0.0.1-inplace-Playground$Main:11639
     $P4DDG-0.0.0.1-inplace-Playground$P4Types:20663
-    $P4DDG-0.0.0.1-inplace-Playground$Parser:505042
+    $P4DDG-0.0.0.1-inplace-Playground$Parser:581612
     $P4DDG-0.0.0.1-inplace-Playground$Transducer.Def:38049
     $P4DDG-0.0.0.1-inplace-Playground$Transducer.GrammarToTransducer:187201
 
@@ -95,7 +110,7 @@ code size per module (in bytes):
     $base$Control.Monad.ST.Strict:      0
     $base$Control.Monad.ST.Unsafe:      0
     $base$Control.Monad.Zip:            0
-    $base$Data.Array.Byte:              0
+    $base$Data.Array.Byte:              215
     $base$Data.Bifoldable:              0
     $base$Data.Bifoldable1:             0
     $base$Data.Bifunctor:               0
@@ -127,7 +142,7 @@ code size per module (in bytes):
     $base$Data.Ix:                      0
     $base$Data.Kind:                    0
     $base$Data.List:                    0
-    $base$Data.List.NonEmpty:           4006
+    $base$Data.List.NonEmpty:           3565
     $base$Data.Maybe:                   0
     $base$Data.Monoid:                  0
     $base$Data.Ord:                     0
@@ -314,6 +329,137 @@ code size per module (in bytes):
     $base$Type.Reflection.Unsafe:       0
     $base$Unsafe.Coerce:                0
 
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Concurrent.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Concurrent.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Concurrent.MVar.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Concurrent.MVar.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Exception.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Exception.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.Fail.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.Fail.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.IO.Class.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.IO.Class.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.ST.Lazy.Unsafe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.ST.Lazy.Unsafe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.ST.Unsafe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Control.Monad.ST.Unsafe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bifoldable.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bifoldable.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bifoldable1.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bifoldable1.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bifunctor.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bifunctor.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bitraversable.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bitraversable.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bits.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bits.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bool.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Bool.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Complex.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Complex.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Either.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Either.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Foldable.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Foldable.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Foldable1.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Foldable1.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Function.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Function.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Compose.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Compose.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Const.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Const.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Contravariant.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Contravariant.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Identity.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Identity.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Product.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Product.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Sum.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Functor.Sum.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.IORef.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.IORef.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.List.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.List.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.List.NonEmpty.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.List.NonEmpty.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Monoid.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Monoid.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Proxy.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Proxy.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Ratio.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Ratio.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.STRef.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.STRef.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Semigroup.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Semigroup.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.String.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.String.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Traversable.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Traversable.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Tuple.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Tuple.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Type.Coercion.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Type.Coercion.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Type.Equality.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Type.Equality.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Typeable.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Typeable.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Version.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Version.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Void.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Void.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Word.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Data.Word.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Debug.Trace.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Debug.Trace.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.ForeignPtr.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.ForeignPtr.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.ForeignPtr.Safe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.ForeignPtr.Safe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.ForeignPtr.Unsafe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.ForeignPtr.Unsafe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Alloc.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Alloc.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Array.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Array.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Safe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Safe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Unsafe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Unsafe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Utils.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Foreign.Marshal.Utils.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Numeric.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Numeric.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Numeric.Natural.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Numeric.Natural.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Prelude.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Prelude.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.Environment.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.Environment.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.Exit.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.Exit.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.IO.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.IO.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.IO.Error.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.IO.Error.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.IO.Unsafe.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$System.IO.Unsafe.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Text.Read.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Text.Read.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Text.Read.Lex.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Text.Read.Lex.Compat.Repl:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Type.Reflection.Compat:0
+    $base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a$Type.Reflection.Compat.Repl:0
+
     $binary-0.8.9.3-inplace$Data.Binary:0
     $binary-0.8.9.3-inplace$Data.Binary.Builder:0
     $binary-0.8.9.3-inplace$Data.Binary.Class:0
@@ -361,6 +507,21 @@ code size per module (in bytes):
     $case-insensitive-1.2.1.0-f5403ee4b520abfd630975b0d056a6c4a071b44a87610ca966cc218e85490bcf$Data.CaseInsensitive.Internal:0
     $case-insensitive-1.2.1.0-f5403ee4b520abfd630975b0d056a6c4a071b44a87610ca966cc218e85490bcf$Data.CaseInsensitive.Unsafe:0
 
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.CIE:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.CIE.Chromaticity:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.CIE.Illuminant:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.Chan:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.Internal:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.Matrix:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.Names:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.RGB:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.RGBSpace:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.RGBSpace.HSL:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.RGBSpace.HSV:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.SRGB:0
+    $colour-2.3.6-acdade75217172987c532167800b29a945d030dd5a512e7f84de808f2062959f$Data.Colour.SRGB.Linear:0
+
     $containers-0.7-inplace$Data.Containers.ListUtils:0
     $containers-0.7-inplace$Data.Graph: 0
     $containers-0.7-inplace$Data.IntMap:0
@@ -375,7 +536,7 @@ code size per module (in bytes):
     $containers-0.7-inplace$Data.IntSet:0
     $containers-0.7-inplace$Data.IntSet.Internal:0
     $containers-0.7-inplace$Data.Map:   0
-    $containers-0.7-inplace$Data.Map.Internal:28146
+    $containers-0.7-inplace$Data.Map.Internal:35433
     $containers-0.7-inplace$Data.Map.Internal.Debug:0
     $containers-0.7-inplace$Data.Map.Internal.DeprecatedShowTree:0
     $containers-0.7-inplace$Data.Map.Lazy:0
@@ -387,7 +548,7 @@ code size per module (in bytes):
     $containers-0.7-inplace$Data.Sequence.Internal:0
     $containers-0.7-inplace$Data.Sequence.Internal.Sorting:0
     $containers-0.7-inplace$Data.Set:   0
-    $containers-0.7-inplace$Data.Set.Internal:44887
+    $containers-0.7-inplace$Data.Set.Internal:39065
     $containers-0.7-inplace$Data.Tree:  256
     $containers-0.7-inplace$Utils.Containers.Internal.BitQueue:0
     $containers-0.7-inplace$Utils.Containers.Internal.BitUtil:0
@@ -400,6 +561,22 @@ code size per module (in bytes):
     $containers-0.7-inplace$Utils.Containers.Internal.TypeError:0
 
     $deepseq-1.5.0.0-inplace$Control.DeepSeq:0
+
+    $directory-1.3.8.5-inplace$System.Directory:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal.C_utimensat:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal.Common:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal.Config:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal.Posix:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal.Prelude:0
+    $directory-1.3.8.5-inplace$System.Directory.Internal.Windows:0
+    $directory-1.3.8.5-inplace$System.Directory.OsPath:0
+
+    $dlist-1.0-266b061219f97f43391ed07dab8747f3312977b09908e0567a18781b8aaf0a1e$Data.DList:0
+    $dlist-1.0-266b061219f97f43391ed07dab8747f3312977b09908e0567a18781b8aaf0a1e$Data.DList.DNonEmpty:0
+    $dlist-1.0-266b061219f97f43391ed07dab8747f3312977b09908e0567a18781b8aaf0a1e$Data.DList.DNonEmpty.Internal:0
+    $dlist-1.0-266b061219f97f43391ed07dab8747f3312977b09908e0567a18781b8aaf0a1e$Data.DList.Internal:0
+    $dlist-1.0-266b061219f97f43391ed07dab8747f3312977b09908e0567a18781b8aaf0a1e$Data.DList.Unsafe:0
 
     $exceptions-0.10.9-inplace$Control.Monad.Catch:0
     $exceptions-0.10.9-inplace$Control.Monad.Catch.Pure:0
@@ -447,13 +624,13 @@ code size per module (in bytes):
     $filepath-1.5.4.0-inplace$System.OsPath.Windows.Internal:0
 
     $ghc-bignum$GHC.Num.Backend:        0
-    $ghc-bignum$GHC.Num.Backend.Native: 9822
+    $ghc-bignum$GHC.Num.Backend.Native: 15311
     $ghc-bignum$GHC.Num.Backend.Selected:0
-    $ghc-bignum$GHC.Num.BigNat:         34146
-    $ghc-bignum$GHC.Num.Integer:        27964
+    $ghc-bignum$GHC.Num.BigNat:         56521
+    $ghc-bignum$GHC.Num.Integer:        45502
     $ghc-bignum$GHC.Num.Natural:        0
     $ghc-bignum$GHC.Num.Primitives:     0
-    $ghc-bignum$GHC.Num.WordArray:      4286
+    $ghc-bignum$GHC.Num.WordArray:      4592
 
     $ghc-boot-th-9.10.2-inplace$GHC.ForeignSrcLang.Type:0
     $ghc-boot-th-9.10.2-inplace$GHC.LanguageExtensions.Type:0
@@ -461,7 +638,7 @@ code size per module (in bytes):
 
     $ghc-internal$GHC.Internal.Arr:     1909
     $ghc-internal$GHC.Internal.ArrayArray:0
-    $ghc-internal$GHC.Internal.Base:    9552
+    $ghc-internal$GHC.Internal.Base:    9694
     $ghc-internal$GHC.Internal.Bits:    0
     $ghc-internal$GHC.Internal.ByteOrder:0
     $ghc-internal$GHC.Internal.Char:    0
@@ -489,10 +666,10 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.Data.Coerce:0
     $ghc-internal$GHC.Internal.Data.Data:0
     $ghc-internal$GHC.Internal.Data.Dynamic:0
-    $ghc-internal$GHC.Internal.Data.Either:513
+    $ghc-internal$GHC.Internal.Data.Either:1547
     $ghc-internal$GHC.Internal.Data.Enum:0
     $ghc-internal$GHC.Internal.Data.Eq: 0
-    $ghc-internal$GHC.Internal.Data.Foldable:1262
+    $ghc-internal$GHC.Internal.Data.Foldable:2469
     $ghc-internal$GHC.Internal.Data.Function:0
     $ghc-internal$GHC.Internal.Data.Functor:0
     $ghc-internal$GHC.Internal.Data.Functor.Const:0
@@ -503,7 +680,7 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.Data.List:0
     $ghc-internal$GHC.Internal.Data.Maybe:880
     $ghc-internal$GHC.Internal.Data.Monoid:0
-    $ghc-internal$GHC.Internal.Data.OldList:13363
+    $ghc-internal$GHC.Internal.Data.OldList:14725
     $ghc-internal$GHC.Internal.Data.Ord:0
     $ghc-internal$GHC.Internal.Data.Proxy:89
     $ghc-internal$GHC.Internal.Data.STRef:0
@@ -524,7 +701,7 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.Debug.Trace:0
     $ghc-internal$GHC.Internal.Desugar: 0
     $ghc-internal$GHC.Internal.Encoding.UTF8:0
-    $ghc-internal$GHC.Internal.Enum:    367
+    $ghc-internal$GHC.Internal.Enum:    13533
     $ghc-internal$GHC.Internal.Environment:0
     $ghc-internal$GHC.Internal.Err:     619
     $ghc-internal$GHC.Internal.Event:   0
@@ -547,13 +724,13 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.Exception:15952
     $ghc-internal$GHC.Internal.Exception.Backtrace:16512
     $ghc-internal$GHC.Internal.Exception.Context:1226
-    $ghc-internal$GHC.Internal.Exception.Type:12720
+    $ghc-internal$GHC.Internal.Exception.Type:12996
     $ghc-internal$GHC.Internal.ExecutionStack:0
     $ghc-internal$GHC.Internal.ExecutionStack.Internal:18845
     $ghc-internal$GHC.Internal.Exts:    0
     $ghc-internal$GHC.Internal.Fingerprint:8679
     $ghc-internal$GHC.Internal.Fingerprint.Type:839
-    $ghc-internal$GHC.Internal.Float:   0
+    $ghc-internal$GHC.Internal.Float:   84830
     $ghc-internal$GHC.Internal.Float.ConversionUtils:0
     $ghc-internal$GHC.Internal.Float.RealFracMethods:0
     $ghc-internal$GHC.Internal.Foreign.C.ConstPtr:0
@@ -615,7 +792,7 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.IORef:   0
     $ghc-internal$GHC.Internal.InfoProv:0
     $ghc-internal$GHC.Internal.InfoProv.Types:6820
-    $ghc-internal$GHC.Internal.Int:     723
+    $ghc-internal$GHC.Internal.Int:     31650
     $ghc-internal$GHC.Internal.Integer: 0
     $ghc-internal$GHC.Internal.Integer.Logarithms:0
     $ghc-internal$GHC.Internal.IsList:  0
@@ -624,12 +801,12 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.JS.Prim: 11005
     $ghc-internal$GHC.Internal.JS.Prim.Internal:4328
     $ghc-internal$GHC.Internal.JS.Prim.Internal.Build:0
-    $ghc-internal$GHC.Internal.List:    22053
+    $ghc-internal$GHC.Internal.List:    23574
     $ghc-internal$GHC.Internal.MVar:    0
     $ghc-internal$GHC.Internal.Maybe:   544
     $ghc-internal$GHC.Internal.Natural: 0
-    $ghc-internal$GHC.Internal.Num:     0
-    $ghc-internal$GHC.Internal.Numeric: 0
+    $ghc-internal$GHC.Internal.Num:     3505
+    $ghc-internal$GHC.Internal.Numeric: 5764
     $ghc-internal$GHC.Internal.Numeric.Natural:0
     $ghc-internal$GHC.Internal.OverloadedLabels:0
     $ghc-internal$GHC.Internal.Pack:    0
@@ -637,12 +814,12 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.Ptr:     241
     $ghc-internal$GHC.Internal.RTS.Flags:0
     $ghc-internal$GHC.Internal.Read:    0
-    $ghc-internal$GHC.Internal.Real:    119
+    $ghc-internal$GHC.Internal.Real:    21785
     $ghc-internal$GHC.Internal.Records: 0
     $ghc-internal$GHC.Internal.ResponseFile:0
     $ghc-internal$GHC.Internal.ST:      0
     $ghc-internal$GHC.Internal.STRef:   239
-    $ghc-internal$GHC.Internal.Show:    37432
+    $ghc-internal$GHC.Internal.Show:    39378
     $ghc-internal$GHC.Internal.Stable:  0
     $ghc-internal$GHC.Internal.StableName:0
     $ghc-internal$GHC.Internal.Stack:   5002
@@ -680,17 +857,17 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.Unicode.Bits:0
     $ghc-internal$GHC.Internal.Unicode.Char.DerivedCoreProperties:0
     $ghc-internal$GHC.Internal.Unicode.Char.UnicodeData.GeneralCategory:347
-    $ghc-internal$GHC.Internal.Unicode.Char.UnicodeData.SimpleLowerCaseMapping:0
+    $ghc-internal$GHC.Internal.Unicode.Char.UnicodeData.SimpleLowerCaseMapping:45234
     $ghc-internal$GHC.Internal.Unicode.Char.UnicodeData.SimpleTitleCaseMapping:0
     $ghc-internal$GHC.Internal.Unicode.Char.UnicodeData.SimpleUpperCaseMapping:0
     $ghc-internal$GHC.Internal.Unicode.Version:0
     $ghc-internal$GHC.Internal.Unsafe.Coerce:0
     $ghc-internal$GHC.Internal.Weak:    0
     $ghc-internal$GHC.Internal.Weak.Finalize:518
-    $ghc-internal$GHC.Internal.Word:    600
+    $ghc-internal$GHC.Internal.Word:    26318
 
     $ghc-prim$GHC.CString:              7058
-    $ghc-prim$GHC.Classes:              33219
+    $ghc-prim$GHC.Classes:              35338
     $ghc-prim$GHC.Debug:                0
     $ghc-prim$GHC.Magic:                0
     $ghc-prim$GHC.Magic.Dict:           0
@@ -700,7 +877,39 @@ code size per module (in bytes):
     $ghc-prim$GHC.Prim.PtrEq:           0
     $ghc-prim$GHC.PrimopWrappers:       0
     $ghc-prim$GHC.Tuple:                2389
-    $ghc-prim$GHC.Types:                3839
+    $ghc-prim$GHC.Types:                4291
+
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz:5415
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Algorithms:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Algorithms.Clustering:10858
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Arrows:21634
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.ColorScheme:1238
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Colors:90949
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Colors.Brewer:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Colors.SVG:298285
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Colors.X11:1165825
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Complete:180563
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.HTML:153353
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Internal:26334
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Same:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Attributes.Values:596599
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Commands:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Commands.Available:15797
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Commands.IO:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Exception:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Internal.State:10074
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Internal.Util:91391
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Parsing:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.PreProcessing:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Printing:225419
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types.Canonical:13388
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types.Generalised:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types.Graph:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types.Internal.Common:58356
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types.Monadic:0
+    $graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510$Data.GraphViz.Types.State:0
 
     $hashable-1.5.0.0-8006d6e633fde7fbaf5c9d3925ab9a9182ba96f4d3731234af15bd1ba3002479$Data.Hashable:0
     $hashable-1.5.0.0-8006d6e633fde7fbaf5c9d3925ab9a9182ba96f4d3731234af15bd1ba3002479$Data.Hashable.Class:0
@@ -718,22 +927,23 @@ code size per module (in bytes):
     $integer-logarithms-1.0.4-26c47a23877493c6733dcba48964aaaeff6748050d2bb7047c519a1d96d80f85$Math.NumberTheory.Powers.Integer:0
     $integer-logarithms-1.0.4-26c47a23877493c6733dcba48964aaaeff6748050d2bb7047c519a1d96d80f85$Math.NumberTheory.Powers.Natural:0
 
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec:4216
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Byte:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Byte.Binary:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Byte.Lexer:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Char:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Char.Lexer:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Class:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Common:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Debug:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Error:104450
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Error.Builder:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Internal:14417
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Lexer:0
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Pos:10155
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.State:2403
-    $megaparsec-9.6.1-accea05aa704664b73513918a3e80dd1c0a7c586379708a146aad5387c7da4a1$Text.Megaparsec.Stream:82203
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec:4216
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Byte:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Byte.Binary:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Byte.Lexer:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Char:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Char.Lexer:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Class:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Common:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Debug:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Error:108727
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Error.Builder:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Internal:5989
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Lexer:0
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Pos:10155
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.State:2403
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Stream:90168
+    $megaparsec-9.7.0-fdcf1c21216e55ca89244362224e23270768413e16712a3bd04852c5c56ae416$Text.Megaparsec.Unicode:14259
 
     $mtl-2.3.1-inplace$Control.Monad.Accum:0
     $mtl-2.3.1-inplace$Control.Monad.Cont:0
@@ -779,6 +989,25 @@ code size per module (in bytes):
     $parser-combinators-1.3.0-1f21daabe87ce66c62a77b5967cef500c225f64b83272cfb7e8434784871ac0e$Control.Monad.Combinators.NonEmpty:0
     $parser-combinators-1.3.0-1f21daabe87ce66c62a77b5967cef500c225f64b83272cfb7e8434784871ac0e$Control.Monad.Permutations:0
 
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.Parse:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.Parse.ByteString:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.HuttonMeijer:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.HuttonMeijerWallace:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Base:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.ByteString:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.ByteStringChar:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Lazy:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Lex:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Parser:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Plain:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Result:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.State:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.StateLazy:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.StateParser:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.StateText:0
+    $polyparse-1.13-75551d8b017bc9d2e9a77768f74150e4e51f40d34b757557f59797efd8f3a4ea$Text.ParserCombinators.Poly.Text:0
+
     $pretty-1.1.3.6-inplace$Text.PrettyPrint:0
     $pretty-1.1.3.6-inplace$Text.PrettyPrint.Annotated:0
     $pretty-1.1.3.6-inplace$Text.PrettyPrint.Annotated.HughesPJ:0
@@ -801,11 +1030,31 @@ code size per module (in bytes):
     $primitive-0.9.1.0-7f9db8ff39435e09cd38c060b608ed41c55e129ddf72dc1a053101438c3085ad$Data.Primitive.SmallArray:0
     $primitive-0.9.1.0-7f9db8ff39435e09cd38c060b608ed41c55e129ddf72dc1a053101438c3085ad$Data.Primitive.Types:0
 
+    $process-1.6.25.0-inplace$System.Cmd:0
+    $process-1.6.25.0-inplace$System.Process:0
+    $process-1.6.25.0-inplace$System.Process.Common:0
+    $process-1.6.25.0-inplace$System.Process.CommunicationHandle:0
+    $process-1.6.25.0-inplace$System.Process.CommunicationHandle.Internal:0
+    $process-1.6.25.0-inplace$System.Process.Internals:0
+    $process-1.6.25.0-inplace$System.Process.JavaScript:0
+
+    $random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef$System.Random:0
+    $random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef$System.Random.Array:0
+    $random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef$System.Random.GFinite:0
+    $random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef$System.Random.Internal:0
+    $random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef$System.Random.Seed:0
+    $random-1.3.1-3ae6a8066486f981227c8c82deabaad12f8ac327c6f4f11f5a43f4d002fd10ef$System.Random.Stateful:0
+
     $scientific-0.3.8.0-edd76d54551a247d49f432c04cfb03c644a9740568db313ed1148b13afd59afa$Data.ByteString.Builder.Scientific:0
     $scientific-0.3.8.0-edd76d54551a247d49f432c04cfb03c644a9740568db313ed1148b13afd59afa$Data.Scientific:0
     $scientific-0.3.8.0-edd76d54551a247d49f432c04cfb03c644a9740568db313ed1148b13afd59afa$Data.Text.Lazy.Builder.Scientific:0
     $scientific-0.3.8.0-edd76d54551a247d49f432c04cfb03c644a9740568db313ed1148b13afd59afa$GHC.Integer.Compat:0
     $scientific-0.3.8.0-edd76d54551a247d49f432c04cfb03c644a9740568db313ed1148b13afd59afa$Utils:0
+
+    $splitmix-0.1.2-5117524ded8921f7ae55ee1492fc58e88e8a6e1fd61f178db9c9f4151519bfc1$Data.Bits.Compat:0
+    $splitmix-0.1.2-5117524ded8921f7ae55ee1492fc58e88e8a6e1fd61f178db9c9f4151519bfc1$System.Random.SplitMix:0
+    $splitmix-0.1.2-5117524ded8921f7ae55ee1492fc58e88e8a6e1fd61f178db9c9f4151519bfc1$System.Random.SplitMix.Init:0
+    $splitmix-0.1.2-5117524ded8921f7ae55ee1492fc58e88e8a6e1fd61f178db9c9f4151519bfc1$System.Random.SplitMix32:0
 
     $stm-2.5.3.1-inplace$Control.Concurrent.STM:0
     $stm-2.5.3.1-inplace$Control.Concurrent.STM.TArray:0
@@ -832,16 +1081,18 @@ code size per module (in bytes):
     $template-haskell$System.FilePath.Posix:0
     $template-haskell$System.FilePath.Windows:0
 
-    $text-2.1.2-inplace$Data.Text:      0
-    $text-2.1.2-inplace$Data.Text.Array:0
+    $temporary-1.3-2f7b9dd83ac17857d17a4077e4666fb28163146acfa00f6f7178d04c4c68182d$System.IO.Temp:0
+
+    $text-2.1.2-inplace$Data.Text:      4927
+    $text-2.1.2-inplace$Data.Text.Array:265
     $text-2.1.2-inplace$Data.Text.Encoding:0
     $text-2.1.2-inplace$Data.Text.Encoding.Error:0
     $text-2.1.2-inplace$Data.Text.Foreign:0
     $text-2.1.2-inplace$Data.Text.IO:   0
     $text-2.1.2-inplace$Data.Text.IO.Utf8:0
-    $text-2.1.2-inplace$Data.Text.Internal:0
+    $text-2.1.2-inplace$Data.Text.Internal:2455
     $text-2.1.2-inplace$Data.Text.Internal.ArrayUtils:0
-    $text-2.1.2-inplace$Data.Text.Internal.Builder:0
+    $text-2.1.2-inplace$Data.Text.Internal.Builder:1565
     $text-2.1.2-inplace$Data.Text.Internal.Builder.Functions:0
     $text-2.1.2-inplace$Data.Text.Internal.Builder.Int.Digits:0
     $text-2.1.2-inplace$Data.Text.Internal.Builder.RealFloat.Functions:0
@@ -853,13 +1104,13 @@ code size per module (in bytes):
     $text-2.1.2-inplace$Data.Text.Internal.Encoding.Utf32:0
     $text-2.1.2-inplace$Data.Text.Internal.Encoding.Utf8:0
     $text-2.1.2-inplace$Data.Text.Internal.Fusion:0
-    $text-2.1.2-inplace$Data.Text.Internal.Fusion.CaseMapping:0
-    $text-2.1.2-inplace$Data.Text.Internal.Fusion.Common:0
+    $text-2.1.2-inplace$Data.Text.Internal.Fusion.CaseMapping:56690
+    $text-2.1.2-inplace$Data.Text.Internal.Fusion.Common:2420
     $text-2.1.2-inplace$Data.Text.Internal.Fusion.Size:0
-    $text-2.1.2-inplace$Data.Text.Internal.Fusion.Types:0
+    $text-2.1.2-inplace$Data.Text.Internal.Fusion.Types:2201
     $text-2.1.2-inplace$Data.Text.Internal.IO:0
     $text-2.1.2-inplace$Data.Text.Internal.IsAscii:0
-    $text-2.1.2-inplace$Data.Text.Internal.Lazy:0
+    $text-2.1.2-inplace$Data.Text.Internal.Lazy:2388
     $text-2.1.2-inplace$Data.Text.Internal.Lazy.Encoding.Fusion:0
     $text-2.1.2-inplace$Data.Text.Internal.Lazy.Fusion:0
     $text-2.1.2-inplace$Data.Text.Internal.Lazy.Search:0
@@ -870,22 +1121,69 @@ code size per module (in bytes):
     $text-2.1.2-inplace$Data.Text.Internal.Reverse:0
     $text-2.1.2-inplace$Data.Text.Internal.Search:0
     $text-2.1.2-inplace$Data.Text.Internal.StrictBuilder:0
-    $text-2.1.2-inplace$Data.Text.Internal.Transformation:0
+    $text-2.1.2-inplace$Data.Text.Internal.Transformation:2136
     $text-2.1.2-inplace$Data.Text.Internal.Unsafe:0
     $text-2.1.2-inplace$Data.Text.Internal.Unsafe.Char:0
     $text-2.1.2-inplace$Data.Text.Internal.Validate:0
     $text-2.1.2-inplace$Data.Text.Internal.Validate.Native:0
-    $text-2.1.2-inplace$Data.Text.Lazy: 0
+    $text-2.1.2-inplace$Data.Text.Lazy: 26080
     $text-2.1.2-inplace$Data.Text.Lazy.Builder:0
     $text-2.1.2-inplace$Data.Text.Lazy.Builder.Int:0
     $text-2.1.2-inplace$Data.Text.Lazy.Builder.RealFloat:0
     $text-2.1.2-inplace$Data.Text.Lazy.Encoding:0
     $text-2.1.2-inplace$Data.Text.Lazy.IO:0
     $text-2.1.2-inplace$Data.Text.Lazy.Internal:0
-    $text-2.1.2-inplace$Data.Text.Lazy.Read:0
+    $text-2.1.2-inplace$Data.Text.Lazy.Read:9291
     $text-2.1.2-inplace$Data.Text.Read: 0
-    $text-2.1.2-inplace$Data.Text.Show: 0
+    $text-2.1.2-inplace$Data.Text.Show: 1665
     $text-2.1.2-inplace$Data.Text.Unsafe:0
+
+    $time-1.12.2-inplace$Data.Format:   0
+    $time-1.12.2-inplace$Data.Time:     0
+    $time-1.12.2-inplace$Data.Time.Calendar:0
+    $time-1.12.2-inplace$Data.Time.Calendar.CalendarDiffDays:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Days:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Easter:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Gregorian:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Julian:0
+    $time-1.12.2-inplace$Data.Time.Calendar.JulianYearDay:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Month:0
+    $time-1.12.2-inplace$Data.Time.Calendar.MonthDay:0
+    $time-1.12.2-inplace$Data.Time.Calendar.OrdinalDate:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Private:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Quarter:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Types:0
+    $time-1.12.2-inplace$Data.Time.Calendar.Week:0
+    $time-1.12.2-inplace$Data.Time.Calendar.WeekDate:0
+    $time-1.12.2-inplace$Data.Time.Clock:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.AbsoluteTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.CTimespec:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.CTimeval:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.DiffTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.NominalDiffTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.POSIXTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.SystemTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.UTCDiff:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.UTCTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.Internal.UniversalTime:0
+    $time-1.12.2-inplace$Data.Time.Clock.POSIX:0
+    $time-1.12.2-inplace$Data.Time.Clock.System:0
+    $time-1.12.2-inplace$Data.Time.Clock.TAI:0
+    $time-1.12.2-inplace$Data.Time.Format:0
+    $time-1.12.2-inplace$Data.Time.Format.Format.Class:0
+    $time-1.12.2-inplace$Data.Time.Format.Format.Instances:0
+    $time-1.12.2-inplace$Data.Time.Format.ISO8601:0
+    $time-1.12.2-inplace$Data.Time.Format.Internal:0
+    $time-1.12.2-inplace$Data.Time.Format.Locale:0
+    $time-1.12.2-inplace$Data.Time.Format.Parse:0
+    $time-1.12.2-inplace$Data.Time.Format.Parse.Class:0
+    $time-1.12.2-inplace$Data.Time.Format.Parse.Instances:0
+    $time-1.12.2-inplace$Data.Time.LocalTime:0
+    $time-1.12.2-inplace$Data.Time.LocalTime.Internal.CalendarDiffTime:0
+    $time-1.12.2-inplace$Data.Time.LocalTime.Internal.LocalTime:0
+    $time-1.12.2-inplace$Data.Time.LocalTime.Internal.TimeOfDay:0
+    $time-1.12.2-inplace$Data.Time.LocalTime.Internal.TimeZone:0
+    $time-1.12.2-inplace$Data.Time.LocalTime.Internal.ZonedTime:0
 
     $transformers-0.6.1.1-inplace$Control.Applicative.Backwards:0
     $transformers-0.6.1.1-inplace$Control.Applicative.Lift:0
@@ -903,7 +1201,7 @@ code size per module (in bytes):
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.Reader:0
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.Select:0
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.State:0
-    $transformers-0.6.1.1-inplace$Control.Monad.Trans.State.Lazy:0
+    $transformers-0.6.1.1-inplace$Control.Monad.Trans.State.Lazy:1836
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.State.Strict:0
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.Writer:0
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.Writer.CPS:0
@@ -911,6 +1209,63 @@ code size per module (in bytes):
     $transformers-0.6.1.1-inplace$Control.Monad.Trans.Writer.Strict:0
     $transformers-0.6.1.1-inplace$Data.Functor.Constant:0
     $transformers-0.6.1.1-inplace$Data.Functor.Reverse:0
+
+    $unix-2.8.6.0-inplace$System.Posix: 0
+    $unix-2.8.6.0-inplace$System.Posix.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.ByteString.FilePath:0
+    $unix-2.8.6.0-inplace$System.Posix.Directory:0
+    $unix-2.8.6.0-inplace$System.Posix.Directory.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.Directory.Common:0
+    $unix-2.8.6.0-inplace$System.Posix.Directory.Fd:0
+    $unix-2.8.6.0-inplace$System.Posix.Directory.Internals:0
+    $unix-2.8.6.0-inplace$System.Posix.Directory.PosixPath:0
+    $unix-2.8.6.0-inplace$System.Posix.DynamicLinker:0
+    $unix-2.8.6.0-inplace$System.Posix.DynamicLinker.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.DynamicLinker.Common:0
+    $unix-2.8.6.0-inplace$System.Posix.DynamicLinker.Module:0
+    $unix-2.8.6.0-inplace$System.Posix.DynamicLinker.Module.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.DynamicLinker.Prim:0
+    $unix-2.8.6.0-inplace$System.Posix.Env:0
+    $unix-2.8.6.0-inplace$System.Posix.Env.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.Env.Internal:0
+    $unix-2.8.6.0-inplace$System.Posix.Env.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.Error:0
+    $unix-2.8.6.0-inplace$System.Posix.Fcntl:0
+    $unix-2.8.6.0-inplace$System.Posix.Files:0
+    $unix-2.8.6.0-inplace$System.Posix.Files.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.Files.Common:0
+    $unix-2.8.6.0-inplace$System.Posix.Files.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.IO:0
+    $unix-2.8.6.0-inplace$System.Posix.IO.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.IO.Common:0
+    $unix-2.8.6.0-inplace$System.Posix.IO.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.PosixPath.FilePath:0
+    $unix-2.8.6.0-inplace$System.Posix.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.Process:0
+    $unix-2.8.6.0-inplace$System.Posix.Process.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.Process.Common:0
+    $unix-2.8.6.0-inplace$System.Posix.Process.Internals:0
+    $unix-2.8.6.0-inplace$System.Posix.Process.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.Resource:0
+    $unix-2.8.6.0-inplace$System.Posix.Semaphore:0
+    $unix-2.8.6.0-inplace$System.Posix.SharedMem:0
+    $unix-2.8.6.0-inplace$System.Posix.Signals:0
+    $unix-2.8.6.0-inplace$System.Posix.Signals.Exts:0
+    $unix-2.8.6.0-inplace$System.Posix.Temp:0
+    $unix-2.8.6.0-inplace$System.Posix.Temp.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.Temp.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.Terminal:0
+    $unix-2.8.6.0-inplace$System.Posix.Terminal.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.Terminal.Common:0
+    $unix-2.8.6.0-inplace$System.Posix.Terminal.PosixString:0
+    $unix-2.8.6.0-inplace$System.Posix.Time:0
+    $unix-2.8.6.0-inplace$System.Posix.Unistd:0
+    $unix-2.8.6.0-inplace$System.Posix.User:0
+    $unix-2.8.6.0-inplace$System.Posix.User.ByteString:0
+    $unix-2.8.6.0-inplace$System.Posix.User.Common:0
+
+    $wl-pprint-text-1.2.0.2-37b2160d20d63dcc89e0199d592f2a17e95c1d5916c4b761c31b585dfb067c82$Text.PrettyPrint.Leijen.Text:107548
+    $wl-pprint-text-1.2.0.2-37b2160d20d63dcc89e0199d592f2a17e95c1d5916c4b761c31b585dfb067c82$Text.PrettyPrint.Leijen.Text.Monadic:0
 
 
 
