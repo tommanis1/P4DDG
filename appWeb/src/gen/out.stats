@@ -1,10 +1,10 @@
 number of modules: 1176
-packed metadata:   12790529
+packed metadata:   12776032
 
 code size summary per package (in bytes):
 
 P4DDG-0.0.0.1-inplace:   0
-P4DDG-0.0.0.1-inplace-Playground:1178165
+P4DDG-0.0.0.1-inplace-Playground:1178167
 array-0.5.8.0-inplace:   0
 base:                    3780
 base-compat-0.14.1-4ac0224fde864071e66f53f871f8bab80222d7501488413d16f7fe044cd4554a:0
@@ -21,7 +21,7 @@ fgl-5.8.3.0-d11baeb4c2539376845cb485d6bca63fc8257316252d90300850fd7f023a19ce:540
 filepath-1.5.4.0-inplace:0
 ghc-bignum:              121926
 ghc-boot-th-9.10.2-inplace:0
-ghc-internal:            843248
+ghc-internal:            815754
 ghc-prim:                49410
 graphviz-2999.20.2.1-69dde8300a4642a0c4dd7f0516988a6032d64b474fb9346c757c41c5c501b510:2965478
 hashable-1.5.0.0-8006d6e633fde7fbaf5c9d3925ab9a9182ba96f4d3731234af15bd1ba3002479:0
@@ -62,7 +62,7 @@ code size per module (in bytes):
     $P4DDG-0.0.0.1-inplace-Playground$DDG.Types:106052
     $P4DDG-0.0.0.1-inplace-Playground$Dot.P4TransducerToDot:32194
     $P4DDG-0.0.0.1-inplace-Playground$Dot.TransducerToDot:41958
-    $P4DDG-0.0.0.1-inplace-Playground$Main:11639
+    $P4DDG-0.0.0.1-inplace-Playground$Main:11641
     $P4DDG-0.0.0.1-inplace-Playground$P4Types:20663
     $P4DDG-0.0.0.1-inplace-Playground$Parser:581612
     $P4DDG-0.0.0.1-inplace-Playground$Transducer.Def:38049
@@ -774,15 +774,15 @@ code size per module (in bytes):
     $ghc-internal$GHC.Internal.IO.FD:   44090
     $ghc-internal$GHC.Internal.IO.Handle:1156
     $ghc-internal$GHC.Internal.IO.Handle.FD:7320
-    $ghc-internal$GHC.Internal.IO.Handle.Internals:37614
+    $ghc-internal$GHC.Internal.IO.Handle.Internals:31393
     $ghc-internal$GHC.Internal.IO.Handle.Lock:0
     $ghc-internal$GHC.Internal.IO.Handle.Lock.Common:0
     $ghc-internal$GHC.Internal.IO.Handle.Lock.Flock:0
     $ghc-internal$GHC.Internal.IO.Handle.Lock.LinuxOFD:0
     $ghc-internal$GHC.Internal.IO.Handle.Lock.NoOp:0
     $ghc-internal$GHC.Internal.IO.Handle.Lock.Windows:0
-    $ghc-internal$GHC.Internal.IO.Handle.Text:20961
-    $ghc-internal$GHC.Internal.IO.Handle.Types:4674
+    $ghc-internal$GHC.Internal.IO.Handle.Text:0
+    $ghc-internal$GHC.Internal.IO.Handle.Types:4362
     $ghc-internal$GHC.Internal.IO.IOMode:0
     $ghc-internal$GHC.Internal.IO.StdHandles:112
     $ghc-internal$GHC.Internal.IO.SubSystem:0

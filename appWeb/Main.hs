@@ -44,8 +44,7 @@ main' x =
   in 
       case parse parse_Grammar "" input of 
     (Left e) -> do 
-      putStrLn  $ Parser.prettyError e
-      toJSArray [toJSString "", s, s, s]
+      toJSArray [toJSString (Parser.prettyError e), s, s, s]
       
     (Right ddg) -> do 
       let transducer = grammar_to_transducer $ ddg
