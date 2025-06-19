@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playground</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
     <style>
         body {
             margin: 0;
@@ -63,7 +64,7 @@
     <div class="split-container">
         <div class="left-panel">
             <button id="compile-btn" onClick="handleCompile()">Compile</button>
-            <textarea id="code-input" placeholder="Enter your code here..."></textarea>
+            <div id="code-input" style="width:100%;height:calc(85vh - 100px);"></div>
         </div>
         <div class="right-panel">
             <textarea id="output" readonly placeholder="P4 code will appear here..."></textarea>
@@ -76,12 +77,27 @@
     </div>
 </body>
 <script language="javascript" src="gen/all.js" defer></script>
-<script src="main.js"></script>
 <script src="viz-standalone.js"></script>
+<script src="codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
+<script src="main.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.42.0/ace.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
-    Viz.instance().then(function(viz) {
-        var svg = viz.renderSVGElement("digraph { a -> b }");
-        document.getElementById("graph").appendChild(svg);
-    });
+    // Viz.instance().then(function(viz) {
+    //     var svg = viz.renderSVGElement("digraph { a -> b }");
+    //     document.getElementById("graph").appendChild(svg);
+    // });
+
+    // Initialize Ace Editor
+    // let aceEditorInstance;
+    // window.addEventListener('DOMContentLoaded', function() {
+    //     aceEditorInstance = ace.edit("code-input");
+    //     aceEditorInstance.setTheme("ace/theme/textmate");
+    //     aceEditorInstance.session.setMode("ace/mode/text");
+    //     aceEditorInstance.setValue('test', -1); // -1 moves cursor to start
+    //     document.getElementById('compile-btn').disabled = false;
+    // });
 </script>
 </html>

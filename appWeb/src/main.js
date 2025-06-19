@@ -1,5 +1,35 @@
+let aceEditorInstance;
+
+window.addEventListener('DOMContentLoaded', function() {
+    aceEditorInstance = ace.edit("code-input");
+    aceEditorInstance.setTheme("ace/theme/textmate");
+    aceEditorInstance.session.setMode("ace/mode/text");
+    aceEditorInstance.setValue('test', -1); // -1 moves cursor to start
+      // Editor behavior - essential QOL features
+      aceEditorInstance.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        showPrintMargin: false,
+        fontSize: 14,
+        tabSize: 2,
+        useSoftTabs: true,
+        behavioursEnabled: true, // Enable auto-pairing of brackets
+        highlightActiveLine: true,
+        wrap: true
+    });
+    document.getElementById('compile-btn').disabled = false;
+});
+
 function handleCompile() {
-    const result = globalCompile(document.getElementById('code-input').value);
+    // Get code from Ace Editor instance if available
+    let code = '';
+    if (aceEditorInstance) {
+        code = aceEditorInstance.getValue();
+    } else {
+        code = document.getElementById('code-input').value;
+    }
+    console.log("Editor value:", code);
+    const result = globalCompile(code);
     console.log(result);
     const [error, p4code, transducerDot, p4TransducerDot] = result;
     
