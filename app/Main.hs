@@ -28,6 +28,7 @@ import qualified Data.Text as T
 import qualified Text.Megaparsec.Char.Lexer as L
 import Control.Monad
 import Transducer.Def(format)
+import DDG.FunctionSpecialization
 -- import DDG.LeftFactor
 -- import qualified CodeGen.Continuation as C
 
@@ -132,6 +133,11 @@ main = do
         print $ ddg
 
         putStrLn $ prettifyDDG ddg
+
+        putStrLn "Spec"
+        putStrLn $ prettifyDDG $ specialise ddg
+
+
 
       let transducer = --moveElseTransitions $ keepOnlyReachable . removeDuplicateEdges . 
                 -- moveElseTransitions $

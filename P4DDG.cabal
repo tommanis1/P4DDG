@@ -20,6 +20,8 @@ library
     exposed-modules:  
         DDG.Types
         DDG.P4DDG
+
+        DDG.FunctionSpecialization
         Parser
         P4Types
         Transducer.Def
