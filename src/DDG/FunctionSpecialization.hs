@@ -19,13 +19,14 @@ specialise :: DDG -> DDG
 specialise g = 
     let
         allToSpecialise = filter (\(Nonterminal n _ _)-> not (hasSingleCallee g n) && not (isRecursive g n)) g
+    in if null allToSpecialise then g else let 
         (Nonterminal n _ _):xs = allToSpecialise
         specialized = specialise' g n
-    in 
-        if null xs then
-            specialized
-        else
-            specialise specialized
+        in 
+            if null xs then
+                specialized
+            else
+                specialise specialized
     
 
 specialise' :: DDG -> NonTerminalName -> DDG
