@@ -27,7 +27,10 @@ data Stmt stmt =
     -- | Pop Integer
     | Extract String
     | Bind String String
-    | HostLanguageStmts [stmt] deriving (Show)
+    | HostLanguageStmts [stmt] 
+    | Output String
+    
+    deriving (Show)
 
 -- | LLM generated; Build a map from nonterminal names to unique identifiers for those with multiple callees
 -- buildContinuationMap :: Grammar -> M.Map String Integer
@@ -65,7 +68,7 @@ mkP4Transducer g t =
         formatted = T.format t
         initialState = M.empty
         computation :: ContinuationState P4Transducer = do
-            convertedParts <- mapM (convert g ) formatted
+            convertedParts <- mapM (convert g t ) formatted
             let combinedTransducer = foldl plus 
                     T.Transducer{T.start=0, T.graph=mkGraph [] []}
                     convertedParts
@@ -78,8 +81,8 @@ mkGraph' :: [LNode [Stmt P4Types.Statement]] -> [LEdge (Transition (DDG.P4DDG.E 
 mkGraph' nodes edges = return $ T.Transducer{T.start = 0, T.graph = mkGraph nodes edges}
 
 type ContinuationState = State (M.Map String [Continuation])
-convert :: Grammar -> (Int, [(T.Transition (DDG.P4DDG.E P4Types.Expression), Int)]) -> ContinuationState P4Transducer
-convert grammar tranducer_state =
+convert :: Grammar -> T.P4Transducer -> (Int, [(T.Transition (DDG.P4DDG.E P4Types.Expression), Int)]) -> ContinuationState P4Transducer
+convert grammar t tranducer_state =
     let listOfFunctionsWithMoreThanOneCallee = functionsWithMoreThanOneCallee  grammar
     in
     case tranducer_state of
@@ -136,15 +139,26 @@ convert grammar tranducer_state =
                 elses = [o | o@(T.Labeled(Epsilon), _) <-outgoing ]
                 rest = filter (\x -> x `notElem` ifs && x `notElem` elses) outgoing
             in
-                if True then --null rest && length elses < 2 then
+                -- if stateId == 4 then error $ "wtf" ++ show outgoing ++ show [l | (id, l) <- (labNodes . T.graph $ t), id == stateId] else
+                if null outgoing then
+                    let label = head [l | (id, l) <- (labNodes . T.graph $ t), id == stateId] -- find label
+                    in 
+                        case label of 
+                            T.Output outputFname -> let
+                                nodes = [(stateId, [Output outputFname] ), (-1, [])]
+                                edges = [(stateId, -1, Otherwise)]
+                                in 
+                                    mkGraph' nodes edges
+                            _ -> 
+                                
+                                    error $ "There seems to be a dead state" ++ show outgoing
+                else --null rest && length elses < 2 then
                     let
                         nodes = [(stateId, [])]
                         edges =
                             map (\((T.Labeled (Constraint (e :: DDG.P4DDG.E P4Types.Expression))), s)-> (stateId, s, (E e :: Transition (DDG.P4DDG.E P4Types.Expression)))) ifs
                             ++ map (\(T.Labeled (Epsilon), s) -> (stateId, s, Otherwise)) elses
                     in mkGraph' nodes edges
-                else
-                    error $ show outgoing
 
 params :: Grammar -> String -> [Param]
 params g i =
@@ -202,6 +216,7 @@ mkP4 grammar t continuationMap =
             ++ "    " ++ "inout metadata_t meta,\n"
             ++ "    " ++ "inout standard_metadata_t standard_metadata) {\n"
         handle_continuations = if contains_param_calls then genReturnState continuationMap else ""
+        params = concatMap(\ (Nonterminal _ (p) _ )-> concatMap (\ (Param t name) -> t ++ " " ++ name ++ ";\n") p) grammar
     in
         (if contains_param_calls then
         "// Place this header definition outside of your parser\n" ++
@@ -212,7 +227,7 @@ mkP4 grammar t continuationMap =
         "return_stack_type["++ show stack_size++"] return_stack;\n" ++
         "bit<"++ show ( compute_bit_width_8 stack_size) ++ "> return_stack_index = 0;\n"
         else "" )++
-
+        params ++
        "state start {\n" ++
         "    transition state_" ++ show start ++ ";\n" ++
         "}\n" ++
@@ -221,7 +236,6 @@ mkP4 grammar t continuationMap =
         ++ handle_continuations
         ++ "}\n"
 
-
 mkState :: Int -> P4Transducer -> String
 mkState s1 t =
     let
@@ -229,6 +243,7 @@ mkState s1 t =
         outgoing =  filter (\(s, _, _) -> s == s1) edges
         body = mkBody $ snd $ head $ filter (\(n, _) -> n == s1) nodes
     in
+        if s1 == -1 then "" else 
         "state state_" ++ show s1 ++ " {\n" ++
             appendToLines "    " body ++
             appendToLines "    " (mkOutgoingTransitions outgoing) ++
@@ -236,6 +251,7 @@ mkState s1 t =
 
 mkOutgoingTransitions :: [(Int, Int, Transition (DDG.P4DDG.E P4Types.Expression))]  -> String
 mkOutgoingTransitions [(s1, s2, Otherwise)]  =
+    if s2 == -1 then "transition state_continue"  ++ ";\n" else
     "transition state_" ++ show s2 ++ ";\n"
 mkOutgoingTransitions out  =
     let
@@ -272,8 +288,9 @@ mkOutgoingTransitions out  =
                 isEqualityExpression (a, b, (DDG.P4DDG.In _ _)) = False
                 isEqualityExpression _ = True
             in
-                if null out then "transition accept;\n" else
-                if null set_memberships then
+                if null out then -- "transition accept;\n"
+                    ""
+                else if null set_memberships then
                     "transition select (" ++ intercalate "," (map (\(_, _,  e) -> innerExpressionToP4 e) equality_expressions) ++ ") {\n" ++
                     concatMap (\((_, s2, e), i) ->
                         case e of
@@ -317,7 +334,7 @@ codegenStmt (HostLanguageStmts stmts) = intercalate "\n" stmts
 codegenStmt (Push i) =
     "return_stack_index = return_stack_index + 1;\n"
     ++ "return_stack[return_stack_index].val = "++show i++";\n"
-
+codegenStmt (Output fName) = "transition state_continue;\n"
 
 compute_bit_width_8 :: Int -> Int
 compute_bit_width_8 x = ((ceiling (logBase 2 (fromIntegral x)) + 7) `div` 8) * 8

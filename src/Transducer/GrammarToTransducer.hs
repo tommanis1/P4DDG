@@ -335,7 +335,7 @@ moveElseTransitions t =
         -- Check if a state has both guarded and non-guarded transitions
         hasGuardedAndNonGuarded :: TransducerGraph e -> Int -> Bool
         hasGuardedAndNonGuarded g state = 
-            let outEdges = out g state
+            let outEdges = Data.Graph.Inductive.out g state
                 hasGuarded = any isGuardedTransition outEdges
                 hasNonGuarded = any (not . isGuardedTransition) outEdges
             in hasGuarded && hasNonGuarded
@@ -353,7 +353,7 @@ moveElseTransitions t =
         modifyTransitions :: (Eq e) => TransducerGraph e -> Int -> TransducerGraph e
         modifyTransitions graph state = 
             let 
-                outEdges = out graph state
+                outEdges = Data.Graph.Inductive.out graph state
                 (guarded, nonGuarded) = partition isGuardedTransition outEdges
                 (calls, nonGuardedNotCalls) = partition isCallOrReturn nonGuarded
                 edges = [edge | edge <- labEdges graph , edge `notElem` nonGuarded] -- This is a big search for no good reason
