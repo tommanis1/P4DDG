@@ -1,2 +1,2 @@
 # P4DDG: data-dependent grammars for packet specification and parsing in P4
-This repository contains a transpiler from [Data-Dependent Grammars](https://dl.acm.org/doi/10.1145/1706299.1706347) to P4 parsers.
+This repository contains a transpiler from [Data-Dependent Grammars](https://dl.acm.org/doi/10.1145/1706299.1706347) to P4 parsers. See the paper [P4DDG: Data-Dependent Grammars for Packet Specification and Parsing in P4](https://dl.acm.org/doi/10.1145/3742876.3742879) for more details and see the [artifact](https://github.com/tommanis1/P4DDG-artefact) for examples of the generated P4 code.
