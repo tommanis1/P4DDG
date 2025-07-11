@@ -334,7 +334,7 @@ codegenStmt (HostLanguageStmts stmts) = intercalate "\n" stmts
 codegenStmt (Push i) =
     "return_stack_index = return_stack_index + 1;\n"
     ++ "return_stack[return_stack_index].val = "++show i++";\n"
-codegenStmt (Output fName) = "transition state_continue;\n"
+codegenStmt (Output fName) = "" --"transition state_continue;\n"
 
 compute_bit_width_8 :: Int -> Int
 compute_bit_width_8 x = ((ceiling (logBase 2 (fromIntegral x)) + 7) `div` 8) * 8
