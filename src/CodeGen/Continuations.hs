@@ -215,7 +215,7 @@ mkP4 grammar t continuationMap =
             ++ "    " ++ "out headers hdr,\n"
             ++ "    " ++ "inout metadata_t meta,\n"
             ++ "    " ++ "inout standard_metadata_t standard_metadata) {\n"
-        handle_continuations = if contains_param_calls then genReturnState continuationMap else ""
+        handle_continuations = if contains_param_calls then genReturnState continuationMap else "state state_continue {transition accept;}"
         params = concatMap(\ (Nonterminal _ (p) _ )-> concatMap (\ (Param t name) -> t ++ " " ++ name ++ ";\n") p) grammar
     in
         (if contains_param_calls then
