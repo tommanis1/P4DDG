@@ -136,6 +136,8 @@ main = do
 
         putStrLn "Spec"
         putStrLn $ prettifyDDG $ specialise ddg
+      
+      -- let ddg = if optimize settings then specialise ddg else ddg
 
 
 

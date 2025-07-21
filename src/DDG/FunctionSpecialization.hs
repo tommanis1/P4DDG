@@ -32,8 +32,8 @@ specialise g =
 specialise' :: DDG -> NonTerminalName -> DDG
 specialise' g n = 
     let
-        callers = filter (\(Nonterminal _ _ rule) -> 
-                            n `elem` visitLabelRule collectCallName rule) g
+        callers = map (\(Nonterminal _ _ rule) -> 
+                             visitLabelRule collectCallName rule) g
         
         -- original definition
         (Nonterminal _ params rule) = head $ filter (\(Nonterminal name _ _) -> name == n) g
@@ -44,8 +44,9 @@ specialise' g n =
         result = evalState (updateLabelDDG (updateNonterminalCall n) gWithoutOriginal) 1
         
         -- New definitions 
-        specialized = map (\i -> Nonterminal (n ++ "_" ++ show i) params rule) [1..length callers]
+        specialized = map (\i -> Nonterminal (n ++ "_" ++ show i) params rule) [1..length callers+1]
     in
+        -- error $ show $ ((show (length callers) )++ n) ++ "test: " ++ show g
         result ++ specialized
 
 updateNonterminalCall :: MonadState Int m => NonTerminalName -> Label e -> m (Label e)
