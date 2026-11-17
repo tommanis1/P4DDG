@@ -1,0 +1,13 @@
+
+Int (bit<16>n ) = ([n > 0] num  {n = n-1;})* [n = 0]
+[n > 0] (0 | . . . | 9)
+{n:=n − 1})∗ [n = 0]1
+2
+[n > 0]
+int[n = 0]
+3
+dig
+5call
+call(n-1) intint(n-1)
+dig
+0-9
