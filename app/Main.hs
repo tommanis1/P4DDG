@@ -16,11 +16,11 @@ import Data.Graph.Inductive.Query.DFS
 
 tunnel = 
         [
-        (Nonterminal "header" [] (Sequence (RuleLabel $ Terminal "ethernet") (RuleLabel $ NonTerminalCall "tunnel" "ethernet.etherType")))
+        (Nonterminal "header" [] (Sequence (RuleLabel $ Terminal "hdr.ethernet") (RuleLabel $ NonTerminalCall "tunnel" "hdr.ethernet.etherType")))
         , Nonterminal "tunnel" ["type"] (
-            (((RuleLabel $ Constraint "type = TYPE_IPV4") `Sequence` (RuleLabel $ Terminal "ipv4"))
+            (((RuleLabel $ Constraint "type == TYPE_IPV4") `Sequence` (RuleLabel $ Terminal "hdr.ipv4"))
 
-            `Alternation` (((RuleLabel $ Constraint "type = TYPE_MYTUNNEL") `Sequence` (RuleLabel $ Terminal "mytunnel")) `Sequence` (RuleLabel $ NonTerminalCall "tunnel" "myTunnel.protoid")))
+            `Alternation` (((RuleLabel $ Constraint "type == TYPE_MYTUNNEL") `Sequence` (RuleLabel $ Terminal "hdr.myTunnel")) `Sequence` (RuleLabel $ NonTerminalCall "tunnel" "hdr.myTunnel.proto_id")))
             `Alternation` (RuleLabel Empty)
           )
         ]

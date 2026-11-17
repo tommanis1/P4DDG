@@ -1,0 +1,20 @@
+-- parsers can call themselves
+-- subparsers are probably not pure ???
+-- arrays(headers stacks ) are statically allocated
+-- what are 12.11. Parser Value Sets??
+
+Problems : 
+    -- storing the environment
+
+precompute the number of possible callees, use a single stack to store the callee 
+in case a state ahs only a single outgoing call we can skip the check param check 
+
+We could make every parametrized nonterminal that is called its own subparser, but I don't quite see the point as they can't call themselves. 
+    Can a subparser call a different subparser at the same level?
+
+if depends on constant we can "unroll " i.e make concrete 
+
+
+
+
+how to handle backtracking if we have non-mutually exclusive alternatives?
