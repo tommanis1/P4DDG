@@ -1,0 +1,36 @@
+digraph {
+    graph [rankdir=LR];
+    node [style=filled
+         ,shape=box
+         ,fillcolor="#e6f3ff"
+         ,color="#4285f4"
+         ,fontname=Arial
+         ,margin="5.0e-2"];
+    edge [style=bold
+         ,arrowsize=0.7
+         ,color="#666666"];
+    0 [label="state_0:\lextract(hdr.ethernet);\ltype = hdr.ethernet.etherType;\lpush(1);\l"];
+    1 [label="state_1:\l"];
+    8 [label="state_8:\l"];
+    16 [label="state_16:\l"];
+    26 [label="state_26:\l"];
+    -1 [label=state_continue];
+    0 -> 1 [label=goto
+           ,fontname=Arial
+           ,fontsize=12];
+    1 -> 16 [label="if \"type == TYPE_IPV4\"\nextract(hdr.ipv4);"
+            ,fontname=Arial
+            ,fontsize=12];
+    1 -> 1 [label="if \"type == TYPE_TUNNEL\"\nextract(hdr.tunnel);\ntype = hdr.tunnel.protoid;\npush(2);"
+           ,fontname=Arial
+           ,fontsize=12];
+    8 -> -1 [label=return
+            ,fontname=Arial
+            ,fontsize=12];
+    16 -> -1 [label=return
+             ,fontname=Arial
+             ,fontsize=12];
+    26 -> -1 [label=return
+             ,fontname=Arial
+             ,fontsize=12];
+}

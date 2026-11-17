@@ -86,6 +86,8 @@ data Param = Param Type Id deriving (Show)
 
 type Grammar =  [Nonterminal]
 
+data P4ParserDefinition = P4ParserDefinition{name :: String, out:: (String, String), otherTypesInTheSignature :: String}
+
 
 type NonTerminalId = String
 type Id = String

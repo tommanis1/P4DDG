@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P4DDG Browser</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .input-section, .output-section {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .error {
+            color: #e74c3c;
+            background-color: #fadbd8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .status.loading {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status.success {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>P4DDG Browser - Grammar to P4 Converter</h1>
+        
+        <div id="status" class="status loading">Loading WASM module...</div>
+        
+        <div class="input-section">
+            <label for="grammarInput">Enter your grammar:</label>
+            <textarea id="grammarInput" placeholder="Enter your grammar definition here...">
+# Example grammar - replace with your own
+S -> A B
+A -> 'a'
+B -> 'b'
+            </textarea>
+            <button id="convertBtn" disabled onclick="convertGrammar()">Convert to P4</button>
+        </div>
+        
+        <div class="output-section">
+            <label for="p4Output">Generated P4 Code:</label>
+            <textarea id="p4Output" readonly placeholder="Generated P4 code will appear here..."></textarea>
+        </div>
+        
+        <div id="errorOutput"></div>
+    </div>
+
+    <script>
+        let wasmModule = null;
+        let wasmMemory = null;
+        let wasmExports = null;
+
+        async function loadWasm() {
+            try {
+                const statusDiv = document.getElementById('status');
+                statusDiv.textContent = 'Loading WASM module...';
+                
+                // Import the WASM module
+                const wasmPath = './P4DDGBrowser.wasm';
+                
+                // Create a basic WASI environment
+                const wasiImports = {
+                    wasi_snapshot_preview1: {
+                        fd_write: (fd, iovs, iovs_len, nwritten) => {
+                            // Simple implementation for stdout
+                            if (fd === 1) { // stdout
+                                let output = '';
+                                const memory = wasmExports.memory;
+                                const view = new DataView(memory.buffer);
+                                
+                                for (let i = 0; i < iovs_len; i++) {
+                                    const ptr = iovs + i * 8;
+                                    const buf = view.getUint32(ptr, true);
+                                    const bufLen = view.getUint32(ptr + 4, true);
+                                    
+                                    const bytes = new Uint8Array(memory.buffer, buf, bufLen);
+                                    output += new TextDecoder().decode(bytes);
+                                }
+                                
+                                // Store output for retrieval
+                                window.wasmOutput = (window.wasmOutput || '') + output;
+                                
+                                // Write the number of bytes written
+                                view.setUint32(nwritten, output.length, true);
+                                return 0;
+                            }
+                            return -1;
+                        },
+                        fd_read: () => 0,
+                        fd_close: () => 0,
+                        fd_seek: () => 0,
+                        proc_exit: (code) => {
+                            // Handle process exit
+                            console.log('WASM process exited with code:', code);
+                        },
+                        environ_sizes_get: (environ_count, environ_buf_size) => {
+                            const memory = wasmExports.memory;
+                            const view = new DataView(memory.buffer);
+                            view.setUint32(environ_count, 0, true);
+                            view.setUint32(environ_buf_size, 0, true);
+                            return 0;
+                        },
+                        environ_get: () => 0,
+                        args_sizes_get: (argc, argv_buf_size) => {
+                            const memory = wasmExports.memory;
+                            const view = new DataView(memory.buffer);
+                            view.setUint32(argc, 0, true);
+                            view.setUint32(argv_buf_size, 0, true);
+                            return 0;
+                        },
+                        args_get: () => 0,
+                        clock_time_get: () => 0,
+                        random_get: () => 0,
+                        poll_oneoff: () => 0,
+                        fd_prestat_get: () => 8, // EBADF
+                        fd_prestat_dir_name: () => 0,
+                    }
+                };
+
+                const wasmResponse = await fetch(wasmPath);
+                if (!wasmResponse.ok) {
+                    throw new Error(`Failed to load WASM file: ${wasmResponse.status}`);
+                }
+                
+                const wasmBytes = await wasmResponse.arrayBuffer();
+                const wasmModule = await WebAssembly.instantiate(wasmBytes, wasiImports);
+                
+                wasmExports = wasmModule.instance.exports;
+                wasmMemory = wasmExports.memory;
+                
+                statusDiv.className = 'status success';
+                statusDiv.textContent = 'WASM module loaded successfully!';
+                
+                document.getElementById('convertBtn').disabled = false;
+                
+                return wasmModule;
+            } catch (error) {
+                console.error('Failed to load WASM:', error);
+                const statusDiv = document.getElementById('status');
+                statusDiv.className = 'status error';
+                statusDiv.textContent = `Failed to load WASM: ${error.message}`;
+                throw error;
+            }
+        }
+
+        function writeStringToMemory(str) {
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(str + '\0'); // null-terminated
+            
+            // Allocate memory (this is a simplified approach)
+            const ptr = wasmExports.malloc ? wasmExports.malloc(bytes.length) : 1024;
+            const memory = new Uint8Array(wasmMemory.buffer, ptr, bytes.length);
+            memory.set(bytes);
+            
+            return ptr;
+        }
+
+        async function convertGrammar() {
+            try {
+                const grammarInput = document.getElementById('grammarInput').value;
+                const errorOutput = document.getElementById('errorOutput');
+                const p4Output = document.getElementById('p4Output');
+                
+                // Clear previous outputs
+                errorOutput.innerHTML = '';
+                p4Output.value = '';
+                window.wasmOutput = '';
+                
+                if (!grammarInput.trim()) {
+                    throw new Error('Please enter a grammar');
+                }
+                
+                // Since the Haskell program reads from stdin, we need a different approach
+                // For now, let's try calling the main function
+                if (wasmExports._start) {
+                    // Prepare input by setting up stdin simulation
+                    // This is a simplified approach - in practice, you might need more complex I/O handling
+                    wasmExports._start();
+                    
+                    // Get the output
+                    if (window.wasmOutput) {
+                        p4Output.value = window.wasmOutput;
+                    } else {
+                        p4Output.value = 'No output generated';
+                    }
+                } else {
+                    throw new Error('WASM main function not found');
+                }
+                
+            } catch (error) {
+                console.error('Conversion error:', error);
+                const errorOutput = document.getElementById('errorOutput');
+                errorOutput.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Load WASM when page loads
+        window.addEventListener('load', loadWasm);
+    </script>
+</body>
+</html> 

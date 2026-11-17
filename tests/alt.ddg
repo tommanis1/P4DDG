@@ -1,0 +1,6 @@
+Hdr = Tunnel(hdr.ethernet.etherType) $
+
+Tunnel(bit<16> type) = 
+ hdr.ipv4
+| [type == TYPE_TUNNEL] hdr.tunnel Tunnel(hdr.tunnel.protoid)
+| () $

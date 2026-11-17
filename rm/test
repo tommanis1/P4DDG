@@ -1,0 +1,4 @@
+Hdr = A()
+    $
+A (bit<10> in) = test
+	       $

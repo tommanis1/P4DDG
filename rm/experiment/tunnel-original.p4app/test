@@ -1,0 +1,51 @@
+{
+  "program": "basic_tunnel.p4",
+  "language": "p4-16",
+  "targets": {
+    "multiswitch": {
+    "links": [
+        [
+            "h1",
+            "s1"
+        ],
+        [
+            "h2",
+            "s1"
+        ]
+    ],
+      "switches": {
+          "s1": {
+              "runtime_json": "s1-runtime.json"
+          },
+          "s2": {
+              "runtime_json": "s2-runtime.json"
+          },
+          "s3": {
+              "runtime_json": "s3-runtime.json"
+          }
+      }
+  },
+  "hosts": {
+    "h1": {
+        "ip": "10.0.1.1/24",
+        "mac": "08:00:00:00:01:11",
+        "commands": [
+            "route add default gw 10.0.1.10 dev eth0",
+            "arp -i eth0 -s 10.0.1.10 08:00:00:00:01:00",
+            "python send.py 10.0.2.2 'P4 is cool'"
+        ],
+        "wait": true
+    },
+    "h2": {
+        "ip": "10.0.2.2/24",
+        "mac": "08:00:00:00:02:22",
+        "commands": [
+            "route add default gw 10.0.2.20 dev eth0",
+            "arp -i eth0 -s 10.0.2.20 08:00:00:00:02:00",
+            "python receive.py"
+        ],
+        "wait": true
+    }
+}
+  }
+  }

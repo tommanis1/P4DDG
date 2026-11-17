@@ -1,0 +1,7 @@
+Parser = hdr.ethernet Next(hdr.ethernet.etherType) hdr.ret$
+
+Next(bit<16> type) = 
+[type == TYPE_IPV4] hdr.ipv4
+| [type == TYPE_TUNNEL] hdr.tunnel Next(hdr.tunnel.protoid)
+| ()
+$

@@ -1,0 +1,63 @@
+digraph {
+    graph [rankdir=TB,
+           splines=spline,
+           overlap=scale,
+           bgcolor="#f7f7f7"];
+    
+    node [style=filled,
+          shape=box,
+          fillcolor="#e6f3ff",
+          color="#4285f4",
+          fontname="Arial",
+          margin=0.3];
+          
+    edge [style=bold,
+          arrowsize=0.8,
+          color="#666666"];
+          
+    0 [label=0];
+    1 [label=1];
+    6 [label=6];
+    8 [label="8\nOut:Hdr"];
+    14 [label=14];
+    16 [label="16\nOut:Tunnel"];
+    24 [label=24];
+    26 [label=26];
+    28 [label="28\nOut:Tunnel"];
+    
+    0 -> 6 [label="hdr.ethernet",
+           fontname=Arial,
+           fontsize=10];
+           
+    1 -> 14 [label="[type == TYPE_IPV4]",
+            fontname=Arial,
+            fontsize=10];
+            
+    1 -> 24 [label="[type == TYPE_TUNNEL]",
+            fontname=Arial,
+            fontsize=10];
+            
+    6 -> 1 [label="call: Tunnel(\"hdr.ethernet.etherType\")",
+           fontname=Arial,
+           fontsize=10];
+           
+    6 -> 8 [label="Tunnel(hdr.ethernet.etherType)",
+           fontname=Arial,
+           fontsize=10];
+           
+    14 -> 16 [label="hdr.ipv4",
+             fontname=Arial,
+             fontsize=10];
+             
+    24 -> 26 [label="hdr.tunnel",
+             fontname=Arial,
+             fontsize=10];
+             
+    26 -> 1 [label="call: Tunnel(\"hdr.tunnel.protoid\")",
+            fontname=Arial,
+            fontsize=10];
+            
+    26 -> 28 [label="Tunnel(hdr.tunnel.protoid)",
+             fontname=Arial,
+             fontsize=10];
+}

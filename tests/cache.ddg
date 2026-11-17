@@ -1,0 +1,15 @@
+MyParser = hdr.ethernet 
+    if [hdr.ethernet.etherType == TYPE_IPV4] then
+        hdr.ipv4 
+        if [hdr.ipv4.protocol == IP_PROT_UDP] then
+            hdr.udp
+            case hdr.ipv4.srcAddr  of
+                % CLIENT_ADDR -> hdr.request %
+                % SERVER_ADDR -> hdr.response %
+                % _ -> () %
+        else
+            ()
+    else 
+        ()
+
+    $

@@ -1,0 +1,16 @@
+MyParser = 
+    hdr.ethernet
+    case hdr.ethernet.etherType of
+        %TYPE_NSH -> hdr.sfc IPV4()%
+        %TYPE_IPV4 -> IPV4()%
+        % TYPE_IPV6 -> IPV4()%
+        % _ -> IPV4()%
+    $
+
+IPV4 = 
+    hdr.ipv4
+    case hdr.ipv4.protocol of
+        %TYPE_TCP -> hdr.tcp%
+        %TYPE_UDP -> hdr.udp%
+        % _ -> ()%
+    $

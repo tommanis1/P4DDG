@@ -1,0 +1,327 @@
+digraph {
+    graph [rankdir=TB];
+    node [style=filled
+         ,shape=box
+         ,fillcolor="#e6f3ff"
+         ,color="#4285f4"
+         ,fontname=Arial
+         ,margin="5.0e-2"];
+    edge [style=bold
+         ,arrowsize=0.7
+         ,color="#666666"];
+    0 [label=0];
+    1 [label=1];
+    2 [label=2];
+    3 [label=3];
+    4 [label=4];
+    5 [label=5];
+    6 [label=6];
+    7 [label=7];
+    8 [label=8];
+    9 [label=9];
+    16 [label=16];
+    18 [label=18];
+    22 [label=22];
+    30 [label=30];
+    34 [label=34];
+    36 [label=36];
+    38 [label="38\nOut:Ethernet"];
+    40 [label="40\nOut:Ethernet"];
+    50 [label=50];
+    56 [label=56];
+    60 [label=60];
+    62 [label=62];
+    64 [label=64];
+    66 [label=66];
+    68 [label=68];
+    70 [label="70\nOut:VlanTag"];
+    74 [label=74];
+    74 [label="74\nOut:EthType"];
+    80 [label=80];
+    82 [label="82\nOut:EthType"];
+    88 [label=88];
+    90 [label="90\nOut:EthType"];
+    98 [label=98];
+    100 [label=100];
+    106 [label=106];
+    108 [label="108\nOut:MPLS"];
+    110 [label="110\nOut:MPLS"];
+    116 [label=116];
+    118 [label=118];
+    118 [label="118\nOut:IPV4"];
+    124 [label=124];
+    126 [label="126\nOut:IPV4"];
+    132 [label=132];
+    134 [label="134\nOut:IPV4"];
+    140 [label=140];
+    142 [label="142\nOut:IPV4"];
+    150 [label=150];
+    152 [label="152\nOut:TCP"];
+    160 [label=160];
+    162 [label=162];
+    162 [label="162\nOut:UDP"];
+    168 [label=168];
+    170 [label="170\nOut:UDP"];
+    180 [label=180];
+    182 [label=182];
+    184 [label="184\nOut:GTPU"];
+    190 [label=190];
+    192 [label=192];
+    192 [label="192\nOut:GTPU"];
+    198 [label=198];
+    206 [label=206];
+    208 [label=208];
+    210 [label=210];
+    212 [label="212\nOut:GTPU"];
+    216 [label="216\nOut:ICMP"];
+    222 [label=222];
+    224 [label=224];
+    232 [label=232];
+    234 [label=234];
+    236 [label="236\nOut:InnerIpv4"];
+    246 [label=246];
+    248 [label=248];
+    250 [label="250\nOut:InnerIpv4"];
+    258 [label=258];
+    260 [label="260\nOut:InnerIpv4"];
+    0 -> 16 [label="hdr.ethernet"
+            ,fontname=Arial
+            ,fontsize=12];
+    1 -> 50 [label="bit<16> possible_tag = packet.lookahead<bit<16>>();"
+            ,fontname=Arial
+            ,fontsize=12];
+    2 -> 74 [label="hdr.eth_type"
+            ,fontname=Arial
+            ,fontsize=12];
+    3 -> 98 [label="hdr.mpls"
+            ,fontname=Arial
+            ,fontsize=12];
+    4 -> 116 [label="hdr.ipv4"
+             ,fontname=Arial
+             ,fontsize=12];
+    5 -> 150 [label="hdr.tcp"
+             ,fontname=Arial
+             ,fontsize=12];
+    6 -> 160 [label="hdr.udp"
+             ,fontname=Arial
+             ,fontsize=12];
+    7 -> 180 [label="hdr.gtpu"
+             ,fontname=Arial
+             ,fontsize=12];
+    7 -> 190 [label="hdr.gtpu_options"
+             ,fontname=Arial
+             ,fontsize=12];
+    8 -> 216 [label="hdr.icmp"
+             ,fontname=Arial
+             ,fontsize=12];
+    9 -> 222 [label="hdr.inner_ipv4"
+             ,fontname=Arial
+             ,fontsize=12];
+    16 -> 18 [label="fabric_metadata.vlan_id = DEFAULT_VLAN_ID;"
+             ,fontname=Arial
+             ,fontsize=12];
+    18 -> 22 [label="bit<16> t = packet.lookahead<bit<16>>();"
+             ,fontname=Arial
+             ,fontsize=12];
+    22 -> 30 [label="[t == ETHERTYPE_QINQ]"
+             ,fontname=Arial
+             ,fontsize=12];
+    22 -> 34 [label="[t == ETHERTYPE_QINQ_NON_STD]"
+             ,fontname=Arial
+             ,fontsize=12];
+    22 -> 36 [label="[t == ETHERTYPE_VLAN]"
+             ,fontname=Arial
+             ,fontsize=12];
+    22 -> 40 [label=EthType
+             ,fontname=Arial
+             ,fontsize=12];
+    30 -> 1 [label="call: VlanTag(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    30 -> 38 [label="VlanTag()"
+             ,fontname=Arial
+             ,fontsize=12];
+    34 -> 1 [label="call: VlanTag(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    34 -> 38 [label="VlanTag()"
+             ,fontname=Arial
+             ,fontsize=12];
+    36 -> 1 [label="call: VlanTag(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    36 -> 38 [label="VlanTag()"
+             ,fontname=Arial
+             ,fontsize=12];
+    50 -> 2 [label="call: EthType(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    50 -> 56 [label="[possible_tag == ETHERTYPE_VLAN]"
+             ,fontname=Arial
+             ,fontsize=12];
+    50 -> 64 [label="EthType()"
+             ,fontname=Arial
+             ,fontsize=12];
+    56 -> 60 [label="hdr.inner_vlan_tag"
+             ,fontname=Arial
+             ,fontsize=12];
+    60 -> 2 [label="call: EthType(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    60 -> 62 [label="EthType()"
+             ,fontname=Arial
+             ,fontsize=12];
+    62 -> 66 [label="hdr.vlan_tag"
+             ,fontname=Arial
+             ,fontsize=12];
+    64 -> 66 [label="hdr.vlan_tag"
+             ,fontname=Arial
+             ,fontsize=12];
+    66 -> 68 [label="hdr.inner_vlan_tag"
+             ,fontname=Arial
+             ,fontsize=12];
+    68 -> 2 [label="call: EthType(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    68 -> 70 [label="EthType()"
+             ,fontname=Arial
+             ,fontsize=12];
+    74 -> 80 [label="[hdr.eth_type.value == ETHERTYPE_MPLS]"
+             ,fontname=Arial
+             ,fontsize=12];
+    74 -> 88 [label="[hdr.eth_type.value == ETHERTYPE_IPV4]"
+             ,fontname=Arial
+             ,fontsize=12];
+    80 -> 3 [label="call: MPLS(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    80 -> 82 [label="MPLS()"
+             ,fontname=Arial
+             ,fontsize=12];
+    88 -> 4 [label="call: IPV4(\"\")"
+            ,fontname=Arial
+            ,fontsize=12];
+    88 -> 90 [label="IPV4()"
+             ,fontname=Arial
+             ,fontsize=12];
+    98 -> 100 [label="fabric_metadata.mpls_label = hdr.mpls.label;\nfabric_metadata.mpls_ttl = hdr.mpls.ttl;\nbit<4> t = packet.lookahead<bit<4>>();"
+              ,fontname=Arial
+              ,fontsize=12];
+    100 -> 0 [label="call: Ethernet(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    100 -> 106 [label="[t == 4]"
+               ,fontname=Arial
+               ,fontsize=12];
+    100 -> 110 [label="Ethernet()"
+               ,fontname=Arial
+               ,fontsize=12];
+    106 -> 4 [label="call: IPV4(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    106 -> 108 [label="IPV4()"
+               ,fontname=Arial
+               ,fontsize=12];
+    116 -> 118 [label="fabric_metadata.ip_proto = hdr.ipv4.protocol;\nfabric_metadata.ip_eth_type = ETHERTYPE_IPV4;\nfabric_metadata.ipv4_src_addr = hdr.ipv4.src_addr;\nfabric_metadata.ipv4_dst_addr = hdr.ipv4.dst_addr;\nlast_ipv4_dscp = hdr.ipv4.dscp;"
+               ,fontname=Arial
+               ,fontsize=12];
+    118 -> 124 [label="[hdr.ipv4.protocol == PROTO_TCP]"
+               ,fontname=Arial
+               ,fontsize=12];
+    118 -> 132 [label="[hdr.ipv4.protocol == PROTO_UDP]"
+               ,fontname=Arial
+               ,fontsize=12];
+    118 -> 140 [label="[hdr.ipv4.protocol == PROTO_ICMP]"
+               ,fontname=Arial
+               ,fontsize=12];
+    124 -> 5 [label="call: TCP(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    124 -> 126 [label="TCP()"
+               ,fontname=Arial
+               ,fontsize=12];
+    132 -> 6 [label="call: UDP(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    132 -> 134 [label="UDP()"
+               ,fontname=Arial
+               ,fontsize=12];
+    140 -> 8 [label="call: ICMP(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    140 -> 142 [label="ICMP()"
+               ,fontname=Arial
+               ,fontsize=12];
+    150 -> 152 [label="fabric_metadata.l4_sport = hdr.tcp.sport;\nfabric_metadata.l4_dport = hdr.tcp.dport;"
+               ,fontname=Arial
+               ,fontsize=12];
+    160 -> 162 [label="fabric_metadata.l4_sport = hdr.udp.sport;\nfabric_metadata.l4_dport = hdr.udp.dport;\ngtpu_t gtpu = packet.lookahead<gtpu_t>();"
+               ,fontname=Arial
+               ,fontsize=12];
+    162 -> 168 [label="[hdr.udp.dport == 2152 && gtpu.version == 0x01 && gtpu.msgtype == 0xff]"
+               ,fontname=Arial
+               ,fontsize=12];
+    168 -> 7 [label="call: GTPU(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    168 -> 170 [label="GTPU()"
+               ,fontname=Arial
+               ,fontsize=12];
+    180 -> 182 [label="[hdr.gtpu.ex_flag,hdr.gtpu.seq_flag,hdr.gtpu.npdu_flag == (0, 0, 0)]"
+               ,fontname=Arial
+               ,fontsize=12];
+    182 -> 9 [label="call: InnerIpv4(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    182 -> 184 [label="InnerIpv4()"
+               ,fontname=Arial
+               ,fontsize=12];
+    190 -> 192 [label="bit<8> gtpu_ext_len = packet.lookahead<bit<8>>();"
+               ,fontname=Arial
+               ,fontsize=12];
+    192 -> 198 [label="[hdr.gtpu_options.next_ext == 0x85 && gtpu_ext_len == 8w1]"
+               ,fontname=Arial
+               ,fontsize=12];
+    198 -> 206 [label="hdr.gtpu_ext_psc"
+               ,fontname=Arial
+               ,fontsize=12];
+    206 -> 208 [label="fabric_metadata.spgw.qfi = hdr.gtpu_ext_psc.qfi;"
+               ,fontname=Arial
+               ,fontsize=12];
+    208 -> 210 [label="[hdr.gtpu_ext_psc.next_ext == 0x0]"
+               ,fontname=Arial
+               ,fontsize=12];
+    210 -> 9 [label="call: InnerIpv4(\"\")"
+             ,fontname=Arial
+             ,fontsize=12];
+    210 -> 212 [label="InnerIpv4()"
+               ,fontname=Arial
+               ,fontsize=12];
+    222 -> 224 [label="last_ipv4_dscp = hdr.inner_ipv4.dscp;"
+               ,fontname=Arial
+               ,fontsize=12];
+    224 -> 232 [label="[hdr.inner_ipv4.protocol == PROTO_TCP]"
+               ,fontname=Arial
+               ,fontsize=12];
+    224 -> 246 [label="[hdr.inner_ipv4.protocol == PROTO_UDP]"
+               ,fontname=Arial
+               ,fontsize=12];
+    224 -> 258 [label="[hdr.inner_ipv4.protocol == PROTO_ICMP]"
+               ,fontname=Arial
+               ,fontsize=12];
+    232 -> 234 [label="hdr.inner_tcp"
+               ,fontname=Arial
+               ,fontsize=12];
+    234 -> 236 [label="fabric_metadata.inner_l4_sport = hdr.inner_tcp.sport;\nfabric_metadata.inner_l4_dport = hdr.inner_tcp.dport;"
+               ,fontname=Arial
+               ,fontsize=12];
+    246 -> 248 [label="hdr.inner_udp"
+               ,fontname=Arial
+               ,fontsize=12];
+    248 -> 250 [label="fabric_metadata.inner_l4_sport = hdr.inner_udp.sport;\nfabric_metadata.inner_l4_dport = hdr.inner_udp.dport;"
+               ,fontname=Arial
+               ,fontsize=12];
+    258 -> 260 [label="hdr.inner_icmp"
+               ,fontname=Arial
+               ,fontsize=12];
+}
